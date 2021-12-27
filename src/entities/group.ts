@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { MyGroup } from './my.group';
 import { Image } from './image';
+import { Category } from '../common/enum/category';
 
 @Entity()
 export class Group {
@@ -21,7 +22,7 @@ export class Group {
   imageList: Image[];
 
   @Column({ type: 'varchar' })
-  category: string;
+  category: Category;
 
   @Column({ type: 'varchar' })
   title: string;
