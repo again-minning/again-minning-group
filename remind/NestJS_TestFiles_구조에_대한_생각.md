@@ -43,9 +43,10 @@ root
 |-|-jest-e2e.json
 ```
 
-위 디렉토리를 보면 controller, service, e2e로 나뉜 것을 확인할 수 있다. 
-package.json에서 script에 정의된 test command인 npm run test:watch는 Test파일의 위치가 변경되어 test파일을 확인하지 못 한다.  
-따라서 e2e 테스트 실행 방식을 unit 테스트에도 적용시켜 해결할 수 있다.
+위 디렉토리를 보면 controller, service, e2e로 나뉜 것을 확인할 수 있다.  
+package.json에서 jest설정을 수정하여 통합적으로 실행시킬 수 있다.  
+본인은 service 혹은 controller 단독 테스트를 간단하게 실행할 수 있도록 e2e 테스트 실행 방식을 unit 테스트에도 적용시켰다.  
+적용은 다음과 같이 진행하였다.
 
 ## 변경된 Test 디렉토리 적용하기
 
