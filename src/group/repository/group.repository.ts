@@ -13,4 +13,11 @@ export class GroupRepository extends Repository<Group> {
       .where('category =:category', { category: category })
       .getMany();
   }
+
+  async findById(id: number): Promise<Group> {
+    return this.createQueryBuilder('group')
+      .whereInIds(id)
+      .leftJoinAndSelect('group.imageList', 'imageList')
+      .getOne();
+  }
 }
