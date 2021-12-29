@@ -70,7 +70,6 @@ export const GROUP_DETAIL = {
     },
   ],
 };
-
 export const GROUP_DETAIL_E2E = {
   data: {
     groupId: '1',
@@ -83,8 +82,6 @@ export const GROUP_DETAIL_E2E = {
     description: '하루 한 잔의 물을 마시는 그룹',
     recommendation: '물을 꾸준히 마셔보세요',
     todayCnt: 0,
-    createdAt: '2021-12-24T13:47:34.163Z',
-    updatedAt: '2021-12-24T13:47:34.163Z',
     imageList: [
       {
         userId: '1',

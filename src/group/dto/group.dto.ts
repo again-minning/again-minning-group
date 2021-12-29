@@ -55,8 +55,8 @@ export class GroupDetail {
 }
 
 export class GroupDetailDto {
-  constructor(groupDetail: GroupDetail) {
-    this.data = groupDetail;
+  constructor(group: Group) {
+    this.data = new GroupDetail(group);
     this.message = new ResponseMessage(HttpStatus.OK, GROUP_OK);
   }
   message: ResponseMessage;
