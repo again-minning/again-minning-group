@@ -57,8 +57,8 @@ describe('GroupService', () => {
     it('group_id가 1번인 그룹을 조회한다.', async () => {
       jest.spyOn(repository, 'findById');
       const result = await service.getGroupDetail(1);
-      expect(result.title).toEqual('하루 한 잔 물 마시기');
-      expect(result.imageList.length).toEqual(2);
+      expect(result.data.title).toEqual('하루 한 잔 물 마시기');
+      expect(result.data.imageList.length).toEqual(2);
     });
   });
 

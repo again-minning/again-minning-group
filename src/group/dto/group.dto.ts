@@ -27,7 +27,7 @@ export class GroupResponseDto {
   category: Category;
 }
 
-export class GroupDetailDto {
+export class GroupDetail {
   constructor(group: Group) {
     this.groupId = group.groupId;
     this.category = group.category;
@@ -52,4 +52,13 @@ export class GroupDetailDto {
   recommendation: string;
   todayCnt: number;
   imageList: Image[];
+}
+
+export class GroupDetailDto {
+  constructor(groupDetail: GroupDetail) {
+    this.data = groupDetail;
+    this.message = new ResponseMessage(HttpStatus.OK, GROUP_OK);
+  }
+  message: ResponseMessage;
+  data: GroupDetail;
 }

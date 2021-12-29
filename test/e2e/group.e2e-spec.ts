@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import {
   ALL_GROUP_LIST,
-  GROUP_DETAIL,
+  GROUP_DETAIL_E2E,
   HEALTH_GROUP_LIST,
 } from '../template/group.template';
 
@@ -46,7 +46,7 @@ describe('GroupController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/group/detail/1')
         .expect(200)
-        .expect(GROUP_DETAIL);
+        .expect(GROUP_DETAIL_E2E);
     });
   });
 });
