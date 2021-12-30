@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from './group';
@@ -11,6 +12,9 @@ import { MyGroup } from './my.group';
 
 @Entity()
 export class Image {
+  @PrimaryColumn({ type: 'bigint' })
+  userId: number;
+
   @ManyToOne(() => Group, (group) => group.imageList, { primary: true })
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: number;

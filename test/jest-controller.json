@@ -1,8 +1,8 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": "./e2e",
+  "rootDir": "./controller",
   "testEnvironment": "node",
-  "testRegex": ".e2e-spec.ts$",
+  "testRegex": ".controller.spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   }
