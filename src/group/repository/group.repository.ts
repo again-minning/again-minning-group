@@ -20,4 +20,12 @@ export class GroupRepository extends Repository<Group> {
       .leftJoinAndSelect('group.imageList', 'imageList')
       .getOne();
   }
+
+  async existById(id: number): Promise<boolean> {
+    const result: Array<object> = await this.createQueryBuilder()
+      .select('group_id')
+      .where('group_id =:id', { id: id })
+      .execute();
+    return result.length != 0;
+  }
 }

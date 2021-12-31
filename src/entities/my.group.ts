@@ -50,4 +50,7 @@ export class MyGroup {
 
   @Column({ type: 'int' })
   rate = 0;
+
+  @Column({ type: 'boolean' })
+  status = true;
 }

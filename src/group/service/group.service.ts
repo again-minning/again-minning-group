@@ -24,11 +24,7 @@ export class GroupService {
     return new GroupDetailDto(group);
   }
 
-  public async findGroupById(groupId: number): Promise<Group> {
-    const group = await this.groupRepository.findById(groupId);
-    if (!group) {
-      throw new NotFoundException(GROUP_NOT_FOUND);
-    }
-    return group;
+  public async existById(groupId: number): Promise<boolean> {
+    return await this.groupRepository.existById(groupId);
   }
 }

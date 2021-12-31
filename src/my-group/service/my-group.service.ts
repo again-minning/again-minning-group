@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { MyGroupRequest, MyGroupResponse } from '../dto/my.group.dto';
 import { MyGroupRepository } from '../repository/my-group.repository';
 import { Connection, QueryRunner, Repository } from 'typeorm';
@@ -19,19 +19,20 @@ export class MyGroupService {
   ) {}
 
   async createMyGroup(req: MyGroupRequest): Promise<MyGroupResponse> {
-    const runner = await this.getQueryRunnerAndStartTransaction();
     await this.isGroup(req.groupId);
+    await this.checkIsExistOnActive(req.groupId, req.userId);
+    const runner = await this.getQueryRunnerAndStartTransaction();
     try {
-      const savedGroup = await runner.manager
+      const myGroup = await runner.manager
         .getRepository(MyGroup)
         .save(this.createNewMyGroup(req));
       const weekList: MyGroupWeek[] = this.createWeekList(
-        savedGroup,
+        myGroup,
         req.weekList,
       );
       await runner.manager.getRepository(MyGroupWeek).save(weekList);
       await runner.commitTransaction();
-      return new MyGroupResponse(savedGroup, weekList);
+      return new MyGroupResponse(myGroup, weekList);
     } catch (err) {
       await runner.rollbackTransaction();
       console.error(err);
@@ -59,8 +60,25 @@ export class MyGroupService {
     );
   }
 
+  private static getTotalDateCnt(last: Date): number {
+    const dateTime = new Date().setHours(9, 0, 0, 0);
+    const lastDateTime = new Date(last).setHours(9, 0, 0, 0);
+    const time = lastDateTime - dateTime;
+    return Math.floor(time / 1000 / 60 / 60 / 24 + 1);
+  }
+
   private async isGroup(groupId: number) {
-    await this.groupService.findGroupById(groupId);
+    const result = await this.groupService.existById(groupId);
+    if (!result) {
+      throw new BadRequestException('그룹이 존재하지 않습니다.');
+    }
+  }
+
+  private async checkIsExistOnActive(groupId: number, userId: number) {
+    const result = await this.myGroupRepository.existOnActive(groupId, userId);
+    if (result) {
+      throw new BadRequestException('이미 진행중인 그룹 잆니다.');
+    }
   }
 
   private async getQueryRunnerAndStartTransaction(): Promise<QueryRunner> {
@@ -68,12 +86,5 @@ export class MyGroupService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     return queryRunner;
-  }
-
-  private static getTotalDateCnt(last: Date): number {
-    const dateTime = new Date().setHours(9, 0, 0, 0);
-    const lastDateTime = new Date(last).setHours(9, 0, 0, 0);
-    const time = lastDateTime - dateTime;
-    return Math.floor(time / 1000 / 60 / 60 / 24 + 1);
   }
 }

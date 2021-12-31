@@ -14,6 +14,7 @@ export class MyGroupResponse {
   constructor(myGroup: MyGroup, weekList: MyGroupWeek[]) {
     this.groupId = myGroup.group.groupId;
     this.userId = myGroup.userId;
+    this.myGroupId = myGroup.myGroupId;
     this.lastDate = myGroup.lastDate;
     this.alarmTime = myGroup.alarmTime;
     this.weekList = weekList.map((myGroupWeek) => myGroupWeek.week);
@@ -21,6 +22,7 @@ export class MyGroupResponse {
   }
   groupId: number;
   userId: number;
+  myGroupId: number;
   lastDate: Date;
   alarmTime: string;
   weekList: Week[];
