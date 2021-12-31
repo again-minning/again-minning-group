@@ -16,11 +16,19 @@ export class GroupService {
     return new GroupResponseListDto(groupList);
   }
 
-  async getGroupDetail(id): Promise<GroupDetailDto> {
+  async getGroupDetail(id: number): Promise<GroupDetailDto> {
     const group = await this.groupRepository.findById(id);
     if (!group) {
       throw new NotFoundException(GROUP_NOT_FOUND);
     }
     return new GroupDetailDto(group);
+  }
+
+  public async findGroupById(groupId: number): Promise<Group> {
+    const group = await this.groupRepository.findById(groupId);
+    if (!group) {
+      throw new NotFoundException(GROUP_NOT_FOUND);
+    }
+    return group;
   }
 }

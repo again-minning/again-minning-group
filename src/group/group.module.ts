@@ -8,5 +8,6 @@ import { GroupRepository } from './repository/group.repository';
   imports: [TypeOrmModule.forFeature([GroupRepository])],
   controllers: [GroupController],
   providers: [GroupService],
+  exports: [GroupService],
 })
 export class GroupModule {}

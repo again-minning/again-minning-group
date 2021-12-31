@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Group } from './group';
 import { Image } from './image';
-import { Week } from './week';
+import { MyGroupWeek } from './my.group.week';
 
 @Entity()
 export class MyGroup {
@@ -23,18 +23,18 @@ export class MyGroup {
   @OneToMany(() => Image, (imageList) => imageList.myGroup)
   imageList: Image[];
 
-  @OneToMany(() => Week, (weekList) => weekList.myGroup)
-  weekList: Week[];
+  @OneToMany(() => MyGroupWeek, (weekList) => weekList.myGroup)
+  weekList: MyGroupWeek[];
 
   @ManyToOne(() => Group, (group) => group.myGroupList)
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
   @Column({ type: 'int' })
-  successCnt: number;
+  successCnt = 0;
 
   @Column({ type: 'int' })
-  totalDateCnt: number;
+  totalDateCnt = 0;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -45,9 +45,9 @@ export class MyGroup {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'varchar' })
-  alarm_time: string;
+  @Column({ type: 'varchar', nullable: true })
+  alarmTime: string;
 
   @Column({ type: 'int' })
-  rate: number;
+  rate = 0;
 }
