@@ -7,7 +7,7 @@ import { MyGroupWeek } from '../../src/entities/my.group.week';
 export const req = new MyGroupRequest();
 req.groupId = 1;
 req.userId = 2;
-req.lastDate = new Date('2021-12-12');
+req.lastDate = new Date('2022-01-04');
 req.weekList = [Week.WED, Week.FRI];
 req.alarmTime = null;
 
