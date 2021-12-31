@@ -36,3 +36,7 @@ lerna-debug.log*
 
 ## ormconfig
 /ormconfig.ts
+
+## env
+.env.dev
+.env.test
