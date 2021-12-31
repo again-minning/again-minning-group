@@ -30,9 +30,11 @@ export class MyGroupService {
         myGroup,
         req.weekList,
       );
-      await runner.manager.getRepository(MyGroupWeek).save(weekList);
+      const savedWeekList = await runner.manager
+        .getRepository(MyGroupWeek)
+        .save(weekList);
       await runner.commitTransaction();
-      return new MyGroupResponse(myGroup, weekList);
+      return new MyGroupResponse(myGroup, savedWeekList);
     } catch (err) {
       await runner.rollbackTransaction();
       console.error(err);
@@ -77,7 +79,7 @@ export class MyGroupService {
   private async checkIsExistOnActive(groupId: number, userId: number) {
     const result = await this.myGroupRepository.existOnActive(groupId, userId);
     if (result) {
-      throw new BadRequestException('이미 진행중인 그룹 잆니다.');
+      throw new BadRequestException('이미 진행중인 그룹 입니다.');
     }
   }
 

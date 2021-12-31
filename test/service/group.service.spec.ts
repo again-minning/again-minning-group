@@ -63,11 +63,9 @@ describe('GroupService', () => {
   });
 
   describe('없은_그룹_조회', () => {
-    it('없는 그룹을 조회하고 NotFoundException이 발생해야 한다.', async () => {
+    it('없는 그룹을 조회하고 NotFoundException이 발생해야 한다.', () => {
       jest.spyOn(repository, 'findById');
-      await expect(service.getGroupDetail(0)).rejects.toThrow(
-        NotFoundException,
-      );
+      expect(service.getGroupDetail(0)).rejects.toThrow(NotFoundException);
     });
   });
 });
