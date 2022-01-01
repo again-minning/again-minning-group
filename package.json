@@ -21,7 +21,9 @@
     "test:service": "jest --config ./test/jest-service.json",
     "test:e2e": "NODE_ENV=test jest --config ./test/jest-e2e.json",
     "test:controller": "jest --config ./test/jest-controller.json",
-    "test:all": "npm run test:service && npm run test:controller && npm run test:e2e"
+    "test:all": "npm run run:db:test && npm run test:service && npm run test:controller && npm run test:e2e && npm run stop:db:test",
+    "run:db:test": "docker run -p 54322:5432 --name test-db -e POSTGRES_HOST_AUTH_METHOD=md5 -e POSTGRES_DB=minning_group-test -e POSTGRES_USER=sol -e POSTGRES_PASSWORD=1234 -d vixx170627/postgres-ko",
+    "stop:db:test": "docker rm -f test-db"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -68,7 +70,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "test",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
