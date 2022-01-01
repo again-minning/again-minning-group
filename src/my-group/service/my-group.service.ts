@@ -1,8 +1,10 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import {
+  MyGroupCreate,
   MyGroupCreateResponse,
   MyGroupRequest,
-  MyGroupResponse,
+  MyGroupSimple,
+  MyGroupSimpleResponse,
 } from '../dto/my.group.dto';
 import { MyGroupRepository } from '../repository/my-group.repository';
 import { Connection, QueryRunner, Repository } from 'typeorm';
@@ -11,7 +13,6 @@ import { GroupService } from '../../group/service/group.service';
 import { MyGroupWeek } from '../../entities/my.group.week';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Week } from '../../common/enum/week';
-import { CommonResponse } from '../../common/response/response.message';
 import {
   DUPLICATE_MY_GROUP,
   MY_GROUP_CREATE_OK,
@@ -19,6 +20,7 @@ import {
   NOT_EXIST_GROUP,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
+import { ResponseMessage } from '../../common/response/response.message';
 
 @Injectable()
 export class MyGroupService {
@@ -30,15 +32,14 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
-  public async getMyGroupList(active, userId): Promise<CommonResponse> {
+  public async getMyGroupList(active, userId): Promise<MyGroupSimpleResponse> {
     MyGroupService.checkBooleanQuery(active);
     const sampleList = await this.myGroupRepository.findAllByStatusAndUserId(
       active,
       userId,
     );
-    return new CommonResponse(
-      HttpStatus.OK,
-      MY_GROUP_OK,
+    return new MyGroupSimpleResponse(
+      new ResponseMessage(HttpStatus.OK, MY_GROUP_OK),
       this.makeMyGroupResponseList(sampleList),
     );
   }
@@ -53,11 +54,11 @@ export class MyGroupService {
     return dataList.map((data) => {
       const rate =
         (data.successCnt / MyGroupService.getPassDateCnt(data.createdAt)) * 100;
-      return new MyGroupResponse(data, rate);
+      return new MyGroupSimple(data, rate);
     });
   }
 
-  async createMyGroup(req: MyGroupRequest): Promise<CommonResponse> {
+  async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreateResponse> {
     await this.isGroup(req.groupId);
     await this.checkIsExistOnActive(req.groupId, req.userId);
     const runner = await this.getQueryRunnerAndStartTransaction();
@@ -73,10 +74,9 @@ export class MyGroupService {
         .getRepository(MyGroupWeek)
         .save(weekList);
       await runner.commitTransaction();
-      return new CommonResponse(
-        HttpStatus.OK,
-        MY_GROUP_CREATE_OK,
-        new MyGroupCreateResponse(myGroup, savedWeekList),
+      return new MyGroupCreateResponse(
+        new ResponseMessage(HttpStatus.OK, MY_GROUP_CREATE_OK),
+        new MyGroupCreate(myGroup, savedWeekList),
       );
     } catch (err) {
       await runner.rollbackTransaction();

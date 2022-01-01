@@ -34,9 +34,6 @@ export class MyGroup {
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
-  @Column({ type: 'varchar' })
-  title: string;
-
   @Column({ type: 'int' })
   successCnt;
 

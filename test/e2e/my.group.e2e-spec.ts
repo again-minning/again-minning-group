@@ -32,4 +32,12 @@ describe('MyGroupController (e2e)', () => {
         .expect(201);
     });
   });
+
+  describe('내_그룹_조회_잘못된_query_요청_e2e', () => {
+    it('/api/v1/my-group/all?active=asd&userId=1 (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/api/v1/my-group/all?active=asd&userId=1')
+        .expect(400);
+    });
+  });
 });

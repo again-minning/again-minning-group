@@ -8,12 +8,3 @@ export class ResponseMessage {
   status: number;
   message: string;
 }
-
-export class CommonResponse {
-  constructor(status: HttpStatus, message: string, data: unknown) {
-    this.message = new ResponseMessage(status, message);
-    this.data = data;
-  }
-  message: ResponseMessage;
-  data: unknown;
-}
