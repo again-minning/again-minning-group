@@ -95,8 +95,8 @@ describe('MyGroupService', () => {
 
   it('요청_값으로_MyGroup_객체_생성_테스트', async () => {
     const res = await myGroupService.createMyGroup(req);
-    expect(res.data.userId).toEqual(2);
-    expect(res.data.weekList[0]).toEqual(Week.WED);
-    expect(res.data.groupId).toEqual(1);
+    expect(res.userId).toEqual(2);
+    expect(res.weekList[0]).toEqual(Week.WED);
+    expect(res.groupId).toEqual(1);
   });
 });

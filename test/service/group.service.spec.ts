@@ -40,7 +40,7 @@ describe('GroupService', () => {
     it('모든 그룹을 응답해야 한다.', async () => {
       jest.spyOn(repository, 'findAll');
       const result = await service.getGroupList(0);
-      expect(result.data.length).toEqual(2);
+      expect(result.length).toEqual(2);
     });
   });
 
@@ -48,8 +48,8 @@ describe('GroupService', () => {
     it('카테고리가 건강인 모든 그룹을 조회한다.', async () => {
       jest.spyOn(repository, 'findAllByCategory');
       const result = await service.getGroupList(3);
-      expect(result.data.length).toEqual(1);
-      expect(result.data[0].title).toEqual('러닝하기');
+      expect(result.length).toEqual(1);
+      expect(result[0].title).toEqual('러닝하기');
     });
   });
 
@@ -57,8 +57,8 @@ describe('GroupService', () => {
     it('group_id가 1번인 그룹을 조회한다.', async () => {
       jest.spyOn(repository, 'findById');
       const result = await service.getGroupDetail(1);
-      expect(result.data.title).toEqual('하루 한 잔 물 마시기');
-      expect(result.data.imageList.length).toEqual(2);
+      expect(result.title).toEqual('하루 한 잔 물 마시기');
+      expect(result.imageList.length).toEqual(2);
     });
   });
 

@@ -1,6 +1,16 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query } from '@nestjs/common';
 import { MyGroupService } from '../service/my-group.service';
-import { MyGroupCreateResponse, MyGroupRequest } from '../dto/my.group.dto';
+import {
+  MyGroupCreate,
+  MyGroupRequest,
+  MyGroupSimple,
+} from '../dto/my.group.dto';
+import { ResponseEntity } from '../../common/response/response.entity';
+import {
+  MY_GROUP_CREATE_OK,
+  MY_GROUP_OK,
+} from '../../common/response/content/message.my-group';
+import { ResponseMessage } from '../../common/response/response.message';
 
 @Controller('/api/v1/my-group')
 export class MyGroupController {
@@ -10,12 +20,21 @@ export class MyGroupController {
   // Todo -> UseGuard(...)
   public async createMyGroup(
     @Body() req: MyGroupRequest,
-  ): Promise<MyGroupCreateResponse> {
-    return this.myGroupService.createMyGroup(req);
+  ): Promise<ResponseEntity<MyGroupCreate>> {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_GROUP_CREATE_OK),
+      await this.myGroupService.createMyGroup(req),
+    );
   }
 
   @Get('/all')
-  public async getMyGroupList(@Query() query) {
-    return this.myGroupService.getMyGroupList(query.active, query.userId);
+  // Todo -> UseGuard(...)
+  public async getMyGroupList(
+    @Query() query,
+  ): Promise<ResponseEntity<MyGroupSimple[]>> {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_GROUP_OK),
+      await this.myGroupService.getMyGroupList(query.active, query.userId),
+    );
   }
 }

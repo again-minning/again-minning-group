@@ -1,10 +1,8 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   MyGroupCreate,
-  MyGroupCreateResponse,
   MyGroupRequest,
   MyGroupSimple,
-  MyGroupSimpleResponse,
 } from '../dto/my.group.dto';
 import { MyGroupRepository } from '../repository/my-group.repository';
 import { Connection, QueryRunner, Repository } from 'typeorm';
@@ -15,12 +13,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Week } from '../../common/enum/week';
 import {
   DUPLICATE_MY_GROUP,
-  MY_GROUP_CREATE_OK,
-  MY_GROUP_OK,
   NOT_EXIST_GROUP,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
-import { ResponseMessage } from '../../common/response/response.message';
 
 @Injectable()
 export class MyGroupService {
@@ -32,33 +27,16 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
-  public async getMyGroupList(active, userId): Promise<MyGroupSimpleResponse> {
+  public async getMyGroupList(active, userId): Promise<MyGroupSimple[]> {
     MyGroupService.checkBooleanQuery(active);
     const sampleList = await this.myGroupRepository.findAllByStatusAndUserId(
       active,
       userId,
     );
-    return new MyGroupSimpleResponse(
-      new ResponseMessage(HttpStatus.OK, MY_GROUP_OK),
-      this.makeMyGroupResponseList(sampleList),
-    );
+    return this.makeMyGroupResponseList(sampleList);
   }
 
-  private static checkBooleanQuery(active) {
-    if (active != 'true' && active != 'false') {
-      throw new BadRequestException(QUERY_BAD_REQUEST);
-    }
-  }
-
-  private makeMyGroupResponseList(dataList: MyGroup[]) {
-    return dataList.map((data) => {
-      const rate =
-        (data.successCnt / MyGroupService.getPassDateCnt(data.createdAt)) * 100;
-      return new MyGroupSimple(data, rate);
-    });
-  }
-
-  async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreateResponse> {
+  async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreate> {
     await this.isGroup(req.groupId);
     await this.checkIsExistOnActive(req.groupId, req.userId);
     const runner = await this.getQueryRunnerAndStartTransaction();
@@ -74,16 +52,27 @@ export class MyGroupService {
         .getRepository(MyGroupWeek)
         .save(weekList);
       await runner.commitTransaction();
-      return new MyGroupCreateResponse(
-        new ResponseMessage(HttpStatus.OK, MY_GROUP_CREATE_OK),
-        new MyGroupCreate(myGroup, savedWeekList),
-      );
+      return new MyGroupCreate(myGroup, savedWeekList);
     } catch (err) {
       await runner.rollbackTransaction();
       console.error(err);
     } finally {
       await runner.release();
     }
+  }
+
+  private static checkBooleanQuery(active) {
+    if (active != 'true' && active != 'false') {
+      throw new BadRequestException(QUERY_BAD_REQUEST);
+    }
+  }
+
+  private makeMyGroupResponseList(dataList: MyGroup[]) {
+    return dataList.map((data) => {
+      const rate =
+        (data.successCnt / MyGroupService.getPassDateCnt(data.createdAt)) * 100;
+      return new MyGroupSimple(data, rate);
+    });
   }
 
   private createNewMyGroup(req: MyGroupRequest) {
