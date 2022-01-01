@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { MyGroupService } from '../service/my-group.service';
-import { MyGroupRequest, MyGroupResponse } from '../dto/my.group.dto';
+import { MyGroupRequest } from '../dto/my.group.dto';
+import { CommonResponse } from '../../common/response/response.message';
 
 @Controller('/api/v1/my-group')
 export class MyGroupController {
@@ -10,7 +11,12 @@ export class MyGroupController {
   // Todo -> UseGuard(...)
   public async createMyGroup(
     @Body() req: MyGroupRequest,
-  ): Promise<MyGroupResponse> {
+  ): Promise<CommonResponse> {
     return this.myGroupService.createMyGroup(req);
+  }
+
+  @Get('/all')
+  public async getMyGroupList(@Query() query) {
+    return this.myGroupService.getMyGroupList(query.active, query.userId);
   }
 }

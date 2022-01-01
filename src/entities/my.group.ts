@@ -34,11 +34,14 @@ export class MyGroup {
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
-  @Column({ type: 'int' })
-  successCnt = 0;
+  @Column({ type: 'varchar' })
+  title: string;
 
   @Column({ type: 'int' })
-  totalDateCnt = 0;
+  successCnt;
+
+  @Column({ type: 'int' })
+  totalDateCnt;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -53,8 +56,11 @@ export class MyGroup {
   alarmTime: string;
 
   @Column({ type: 'int' })
-  rate = 0;
+  rate;
 
   @Column({ type: 'boolean' })
-  status = true;
+  status;
+
+  @Column({ type: 'boolean' })
+  isDone;
 }

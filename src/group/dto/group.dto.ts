@@ -1,18 +1,6 @@
-import { ResponseMessage } from '../../common/response/response.message';
 import { Category } from '../../common/enum/category';
 import { Group } from '../../entities/group';
-import { HttpStatus } from '@nestjs/common';
-import { GROUP_OK } from '../../common/response/content/message.group';
 import { Image } from '../../entities/image';
-
-export class GroupResponseListDto {
-  constructor(groupList: Group[]) {
-    this.message = new ResponseMessage(HttpStatus.OK, GROUP_OK);
-    this.data = groupList.map((x) => new GroupResponseDto(x));
-  }
-  message: ResponseMessage;
-  data: GroupResponseDto[];
-}
 
 export class GroupResponseDto {
   constructor(group: Group) {
@@ -52,13 +40,4 @@ export class GroupDetail {
   recommendation: string;
   todayCnt: number;
   imageList: Image[];
-}
-
-export class GroupDetailDto {
-  constructor(group: Group) {
-    this.data = new GroupDetail(group);
-    this.message = new ResponseMessage(HttpStatus.OK, GROUP_OK);
-  }
-  message: ResponseMessage;
-  data: GroupDetail;
 }
