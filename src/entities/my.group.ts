@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Group } from './group';
 import { Image } from './image';
-import { Week } from './week';
+import { MyGroupWeek } from './my.group.week';
 
 @Entity()
 export class MyGroup {
@@ -20,21 +20,25 @@ export class MyGroup {
   @Column({ type: 'bigint', name: 'user_id' })
   userId: number;
 
-  @OneToMany(() => Image, (imageList) => imageList.myGroup)
+  @OneToMany(() => Image, (imageList) => imageList.myGroup, {
+    onDelete: 'CASCADE',
+  })
   imageList: Image[];
 
-  @OneToMany(() => Week, (weekList) => weekList.myGroup)
-  weekList: Week[];
+  @OneToMany(() => MyGroupWeek, (weekList) => weekList.myGroup, {
+    onDelete: 'CASCADE',
+  })
+  weekList: MyGroupWeek[];
 
   @ManyToOne(() => Group, (group) => group.myGroupList)
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
   @Column({ type: 'int' })
-  successCnt: number;
+  successCnt;
 
   @Column({ type: 'int' })
-  totalDateCnt: number;
+  totalDateCnt;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -45,9 +49,15 @@ export class MyGroup {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'varchar' })
-  alarm_time: string;
+  @Column({ type: 'varchar', nullable: true })
+  alarmTime: string;
 
   @Column({ type: 'int' })
-  rate: number;
+  rate;
+
+  @Column({ type: 'boolean' })
+  status;
+
+  @Column({ type: 'boolean' })
+  isDone;
 }

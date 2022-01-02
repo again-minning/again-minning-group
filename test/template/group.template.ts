@@ -82,20 +82,7 @@ export const GROUP_DETAIL_E2E = {
     description: '하루 한 잔의 물을 마시는 그룹',
     recommendation: '물을 꾸준히 마셔보세요',
     todayCnt: 0,
-    imageList: [
-      {
-        userId: '1',
-        url: '2',
-        createdAt: '2021-12-24T13:47:34.163Z',
-        updatedAt: '2021-12-24T13:47:34.163Z',
-      },
-      {
-        userId: '1',
-        url: '1',
-        createdAt: '2021-12-24T13:47:34.163Z',
-        updatedAt: '2021-12-24T13:47:34.163Z',
-      },
-    ],
+    imageList: [],
   },
   message: {
     status: 200,
