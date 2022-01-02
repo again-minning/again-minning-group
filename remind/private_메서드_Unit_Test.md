@@ -33,7 +33,6 @@ console.log(result); // result == 'Hello?'
 
 property는 javascript의 기능이고, typescript는 결국 javascrip로 변환되기 때문이라고 한다.  
 결국 javascript로 변환 되면서 접근 제어자가 없어진다는 것 이다.  
-음.. TypeScript에서 접근 제어자의 역할이 Java와 조금 다른건지.. 좀 더 공부해봐야겠다.  
 
 추가로 댓글에서 private 메서드 테스트를 하냐 마냐에 대해 의견이 나뉘었다.  
 
