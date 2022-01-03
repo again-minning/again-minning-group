@@ -40,15 +40,6 @@ export class MyGroupCreate {
   rate: number;
 }
 
-export class MyGroupSimpleResponse {
-  constructor(message: ResponseMessage, data: MyGroupSimple[]) {
-    this.message = message;
-    this.data = data;
-  }
-  message: ResponseMessage;
-  data: MyGroupSimple[];
-}
-
 export class MyGroupSimple {
   constructor(data: MyGroup, rate: number) {
     this.myGroupId = data.myGroupId;

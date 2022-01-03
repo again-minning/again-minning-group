@@ -60,4 +60,9 @@ export class MyGroup {
 
   @Column({ type: 'boolean' })
   isDone;
+
+  public doneDayMyGroup(): void {
+    this.isDone = true;
+    this.successCnt += 1;
+  }
 }

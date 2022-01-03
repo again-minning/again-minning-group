@@ -10,11 +10,8 @@ export class ResponseEntity<T> {
     this.data = data;
   }
 
-  static OK(): ResponseEntity<string> {
-    return new ResponseEntity<string>(
-      new ResponseMessage(HttpStatus.OK, ''),
-      '',
-    );
+  static OK(message: string): ResponseMessage {
+    return new ResponseMessage(HttpStatus.OK, message);
   }
 
   static OK_WITH<T>(message: ResponseMessage, data: T): ResponseEntity<T> {

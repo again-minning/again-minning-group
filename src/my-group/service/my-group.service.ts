@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   MyGroupCreate,
   MyGroupRequest,
@@ -16,6 +20,7 @@ import {
   NOT_EXIST_GROUP,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
+import { Image } from '../../entities/image';
 
 @Injectable()
 export class MyGroupService {
@@ -27,6 +32,29 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async doneDayMyGroup(
+    myGroupId: number,
+    userId: number,
+    file: Express.Multer.File,
+  ): Promise<void> {
+    const myGroup = await this.checkIsMine(myGroupId, userId);
+    MyGroupService.checkTimeIsValid(myGroup);
+    myGroup.doneDayMyGroup();
+    const runner = await this.getQueryRunnerAndStartTransaction();
+    try {
+      await runner.manager
+        .getRepository(Image)
+        .save(MyGroupService.createImage(myGroup, file));
+      await runner.manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
+      await runner.commitTransaction();
+    } catch (err) {
+      await runner.rollbackTransaction();
+      console.error(err);
+    } finally {
+      await runner.release();
+    }
+  }
+
   public async getMyGroupList(active, userId): Promise<MyGroupSimple[]> {
     MyGroupService.checkBooleanQuery(active);
     const sampleList = await this.myGroupRepository.findAllByStatusAndUserId(
@@ -36,7 +64,7 @@ export class MyGroupService {
     return this.makeMyGroupResponseList(sampleList);
   }
 
-  async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreate> {
+  public async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreate> {
     await this.isGroup(req.groupId);
     await this.checkIsExistOnActive(req.groupId, req.userId);
     const runner = await this.getQueryRunnerAndStartTransaction();
@@ -131,5 +159,44 @@ export class MyGroupService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     return queryRunner;
+  }
+
+  private async checkIsMine(
+    myGroupId: number,
+    userId: number,
+  ): Promise<MyGroup> {
+    const myGroup = await this.myGroupRepository.findOne(myGroupId, {
+      relations: ['group'],
+    });
+    if (!myGroup) {
+      throw new NotFoundException('나의 그룹이 존재하지 않습니다');
+    }
+    if (myGroup.userId != userId) {
+      throw new BadRequestException('나의 그룹 ID를 확인하세요.');
+    }
+    return myGroup;
+  }
+
+  private static checkTimeIsValid(myGroup: MyGroup) {
+    const day = new Date();
+    const hour = day.getHours();
+    if (!(hour <= 8 && hour >= 5)) {
+      throw new BadRequestException('가능한 시간이 아닙니다.');
+    }
+    if (myGroup.isDone) {
+      throw new BadRequestException('오늘 이미 인증하였습니다.');
+    }
+  }
+
+  private static createImage(
+    myGroup: MyGroup,
+    file: Express.Multer.File,
+  ): Image {
+    const image = new Image();
+    image.group = myGroup.group;
+    image.myGroup = myGroup;
+    image.userId = myGroup.userId;
+    image.url = file.originalname + new Date().getMilliseconds();
+    return image;
   }
 }
