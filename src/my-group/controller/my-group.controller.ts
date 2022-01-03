@@ -17,6 +17,7 @@ import {
 } from '../dto/my.group.dto';
 import { ResponseEntity } from '../../common/response/response.entity';
 import {
+  DONE_MY_GROUP_OK,
   MY_GROUP_CREATE_OK,
   MY_GROUP_OK,
 } from '../../common/response/content/message.my-group';
@@ -39,7 +40,7 @@ export class MyGroupController {
       id['userId'],
       file,
     );
-    return ResponseEntity.OK('정상적으로 오늘 그룹을 수행하였습니다.');
+    return ResponseEntity.OK(DONE_MY_GROUP_OK);
   }
 
   @Post('/')

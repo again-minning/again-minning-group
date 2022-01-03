@@ -17,6 +17,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Week } from '../../common/enum/week';
 import {
   DUPLICATE_MY_GROUP,
+  INVALID_MY_GROUP_ID,
+  INVALID_TIME,
+  IS_DONE,
+  MY_GROUP_NOT_FOUND,
   NOT_EXIST_GROUP,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
@@ -169,10 +173,10 @@ export class MyGroupService {
       relations: ['group'],
     });
     if (!myGroup) {
-      throw new NotFoundException('나의 그룹이 존재하지 않습니다');
+      throw new NotFoundException(MY_GROUP_NOT_FOUND);
     }
     if (myGroup.userId != userId) {
-      throw new BadRequestException('나의 그룹 ID를 확인하세요.');
+      throw new BadRequestException(INVALID_MY_GROUP_ID);
     }
     return myGroup;
   }
@@ -181,10 +185,10 @@ export class MyGroupService {
     const day = new Date();
     const hour = day.getHours();
     if (!(hour <= 8 && hour >= 5)) {
-      throw new BadRequestException('가능한 시간이 아닙니다.');
+      throw new BadRequestException(INVALID_TIME);
     }
     if (myGroup.isDone) {
-      throw new BadRequestException('오늘 이미 인증하였습니다.');
+      throw new BadRequestException(IS_DONE);
     }
   }
 
