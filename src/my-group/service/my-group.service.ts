@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Week } from '../../common/enum/week';
 import {
   DUPLICATE_MY_GROUP,
+  INVALID_DATE,
   INVALID_MY_GROUP_ID,
   INVALID_TIME,
   IS_DONE,
@@ -44,6 +45,7 @@ export class MyGroupService {
     const myGroup = await this.checkIsMine(myGroupId, userId);
     MyGroupService.checkTimeIsValid(myGroup);
     myGroup.doneDayMyGroup();
+    delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
     const runner = await this.getQueryRunnerAndStartTransaction();
     try {
       await runner.manager
@@ -170,7 +172,7 @@ export class MyGroupService {
     userId: number,
   ): Promise<MyGroup> {
     const myGroup = await this.myGroupRepository.findOne(myGroupId, {
-      relations: ['group'],
+      relations: ['group', 'weekList'],
     });
     if (!myGroup) {
       throw new NotFoundException(MY_GROUP_NOT_FOUND);
@@ -182,13 +184,20 @@ export class MyGroupService {
   }
 
   private static checkTimeIsValid(myGroup: MyGroup) {
-    const day = new Date();
-    const hour = day.getHours();
+    const date = new Date();
+    const hour = date.getHours();
+    const day = date.getDay();
+    const weekList = myGroup.weekList.map((myWeek) => {
+      return Number(Week[myWeek.week]);
+    });
     if (!(hour <= 8 && hour >= 5)) {
       throw new BadRequestException(INVALID_TIME);
     }
     if (myGroup.isDone) {
       throw new BadRequestException(IS_DONE);
+    }
+    if (!weekList.includes(day)) {
+      throw new BadRequestException(INVALID_DATE);
     }
   }
 

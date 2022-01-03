@@ -8,3 +8,4 @@ export const INVALID_MY_GROUP_ID = '나의 그룹 ID를 확인하세요.';
 export const INVALID_TIME = '가능한 시간이 아닙니다.';
 export const IS_DONE = '오늘 이미 인증하였습니다.';
 export const DONE_MY_GROUP_OK = '정상적으로 오늘 그룹을 수행하였습니다.';
+export const INVALID_DATE = '수행하는 날이 아닙니다.';
