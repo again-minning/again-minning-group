@@ -8,7 +8,9 @@ import { Connection } from 'typeorm';
 import { GroupService } from '../../src/group/service/group.service';
 import { BadRequestException } from '@nestjs/common';
 import {
+  mockFile,
   myGroup,
+  myGroup2,
   myGroupWeek1,
   myGroupWeek2,
   req,
@@ -26,6 +28,7 @@ describe('MyGroupService', () => {
       .mockResolvedValueOnce(false),
     save: jest.fn().mockResolvedValue(myGroup),
     create: jest.fn(),
+    findOne: jest.fn().mockResolvedValue(myGroup2),
   };
   const mockGroupRepository = {
     existById: jest
@@ -96,7 +99,41 @@ describe('MyGroupService', () => {
   it('요청_값으로_MyGroup_객체_생성_테스트', async () => {
     const res = await myGroupService.createMyGroup(req);
     expect(res.userId).toEqual(2);
-    expect(res.weekList[0]).toEqual(Week.WED);
+    expect(res.weekList[0]).toEqual(Week.SUN);
     expect(res.groupId).toEqual(1);
+  });
+
+  it('수행시간이_아닌_경우_테스트', () => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('2022-01-02T10:20:30Z').getTime());
+    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('수행요일이_아닌_경우_테스트', () => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
+    myGroup2.weekList[0].week = Week.WED;
+    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('이미_수행한_경우_테스트', () => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
+    myGroup2.isDone = true;
+    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('이미지가_없는_경우_테스트', () => {
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
+    expect(myGroupService['checkValid'](myGroup2, null)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 });
