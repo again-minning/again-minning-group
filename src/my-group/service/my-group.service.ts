@@ -179,7 +179,6 @@ export class MyGroupService {
       throw new NotFoundException(MY_GROUP_NOT_FOUND);
     }
     if (myGroup.userId != userId) {
-      console.log(myGroup.userId, userId);
       throw new BadRequestException(INVALID_MY_GROUP_ID);
     }
     return myGroup;

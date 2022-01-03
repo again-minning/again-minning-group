@@ -27,7 +27,7 @@ import { ResponseMessage } from '../../common/response/response.message';
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
 
-  @Post('')
+  @Post('/done')
   // Todo -> UseGuard(...)
   // Todo Refactoring Save File
   @UseInterceptors(FileInterceptor('file'))
