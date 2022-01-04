@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { MyGroupService } from '../service/my-group.service';
 import {
   MyGroupCreate,
@@ -7,6 +17,7 @@ import {
 } from '../dto/my.group.dto';
 import { ResponseEntity } from '../../common/response/response.entity';
 import {
+  DONE_MY_GROUP_OK,
   MY_GROUP_CREATE_OK,
   MY_GROUP_OK,
 } from '../../common/response/content/message.my-group';
@@ -15,6 +26,22 @@ import { ResponseMessage } from '../../common/response/response.message';
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Post('/done')
+  // Todo -> UseGuard(...)
+  // Todo Refactoring Save File
+  @UseInterceptors(FileInterceptor('file'))
+  public async doneDayMyGroup(
+    @Query() id: number[],
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    await this.myGroupService.doneDayMyGroup(
+      id['myGroupId'],
+      id['userId'],
+      file,
+    );
+    return ResponseEntity.OK(DONE_MY_GROUP_OK);
+  }
 
   @Post('/')
   // Todo -> UseGuard(...)

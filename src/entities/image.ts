@@ -12,18 +12,18 @@ import { MyGroup } from './my.group';
 
 @Entity()
 export class Image {
-  @PrimaryColumn({ type: 'bigint' })
+  @PrimaryColumn({ type: 'bigint', primary: true })
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.imageList, { primary: true })
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
-  group: number;
+  group: Group;
 
   @ManyToOne(() => MyGroup, (myGroup) => myGroup.imageList, { primary: true })
   @JoinColumn([{ name: 'my_group_id', referencedColumnName: 'myGroupId' }])
-  myGroup: number;
+  myGroup: MyGroup;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', primary: true })
   url: string;
 
   @CreateDateColumn()
