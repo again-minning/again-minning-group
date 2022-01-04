@@ -20,6 +20,7 @@ import { Week } from '../../src/common/enum/week';
 
 describe('MyGroupService', () => {
   let myGroupService: MyGroupService;
+  let connection: Connection;
 
   const mockMyGroupRepository = {
     existOnActive: jest
@@ -84,6 +85,7 @@ describe('MyGroupService', () => {
     }).compile();
 
     myGroupService = module.get<MyGroupService>(MyGroupService);
+    connection = module.get<Connection>(Connection);
   });
 
   it('그룹이_존재하지_않는_경우', () => {
@@ -97,7 +99,10 @@ describe('MyGroupService', () => {
   });
 
   it('요청_값으로_MyGroup_객체_생성_테스트', async () => {
-    const res = await myGroupService.createMyGroup(req);
+    const res = await myGroupService.createMyGroup(
+      req,
+      connection.createQueryRunner().manager,
+    );
     expect(res.userId).toEqual(2);
     expect(res.weekList[0]).toEqual(Week.SUN);
     expect(res.groupId).toEqual(1);

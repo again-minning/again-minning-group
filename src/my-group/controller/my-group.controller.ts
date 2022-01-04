@@ -22,6 +22,8 @@ import {
   MY_GROUP_OK,
 } from '../../common/response/content/message.my-group';
 import { ResponseMessage } from '../../common/response/response.message';
+import { TransactionInterceptor } from '../../common/transaction.interceptor';
+import { EntityManager } from '../../common/entity.manager.decorator';
 
 @Controller('/api/v1/my-group')
 export class MyGroupController {
@@ -30,27 +32,31 @@ export class MyGroupController {
   @Post('/done')
   // Todo -> UseGuard(...)
   // Todo Refactoring Save File
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'), TransactionInterceptor)
   public async doneDayMyGroup(
     @Query() id: number[],
     @UploadedFile() file: Express.Multer.File,
+    @EntityManager() manager,
   ) {
     await this.myGroupService.doneDayMyGroup(
       id['myGroupId'],
       id['userId'],
       file,
+      manager,
     );
     return ResponseEntity.OK(DONE_MY_GROUP_OK);
   }
 
   @Post('/')
+  @UseInterceptors(TransactionInterceptor)
   // Todo -> UseGuard(...)
   public async createMyGroup(
     @Body() req: MyGroupRequest,
+    @EntityManager() manager,
   ): Promise<ResponseEntity<MyGroupCreate>> {
     return ResponseEntity.OK_WITH(
       new ResponseMessage(HttpStatus.OK, MY_GROUP_CREATE_OK),
-      await this.myGroupService.createMyGroup(req),
+      await this.myGroupService.createMyGroup(req, manager),
     );
   }
 

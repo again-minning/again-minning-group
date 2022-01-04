@@ -6,7 +6,7 @@ import { MyGroupModule } from './my-group/my-group.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as ormConfig from '../ormconfig';
 import { APP_FILTER } from '@nestjs/core';
-import { CustomExceptionFilter } from './common/exception/custom.exception.filter';
+import { HttpExceptionFilter } from './common/exception/http.exception.filter';
 import { ConfigModule } from '@nestjs/config';
 import * as path from 'path';
 
@@ -27,7 +27,7 @@ import * as path from 'path';
     AppService,
     {
       provide: APP_FILTER,
-      useClass: CustomExceptionFilter,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
