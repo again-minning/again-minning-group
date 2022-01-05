@@ -60,3 +60,8 @@ export class MyGroupSimple {
   isDone: boolean;
   lastDate: Date;
 }
+
+export class MyGroupDoneAndAllCnt {
+  allCnt: number;
+  doneCnt: number;
+}

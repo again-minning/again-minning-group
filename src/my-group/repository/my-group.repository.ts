@@ -1,5 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { MyGroup } from '../../entities/my.group';
+import { MyGroupDoneAndAllCnt } from '../dto/my.group.dto';
 
 @EntityRepository(MyGroup)
 export class MyGroupRepository extends Repository<MyGroup> {
@@ -26,5 +27,28 @@ export class MyGroupRepository extends Repository<MyGroup> {
       .where('user_id =:userId', { userId: userId })
       .andWhere('status =:status', { status: status })
       .getMany();
+  }
+
+  public async countAllCntAndDoneCntByStatusTrueAndUserId(
+    userId: number,
+  ): Promise<MyGroupDoneAndAllCnt> {
+    return await this.createQueryBuilder('myGroup')
+      .select('COUNT(*)', 'allCnt')
+      .addSelect(
+        (qb) =>
+          qb
+            .select('COUNT(*)')
+            .from(MyGroup, 'm')
+            .where(
+              'm.userId =:userId and m.isDone = true and m.status = true',
+              { userId: userId },
+            ),
+        'doneCnt',
+      )
+      .where('myGroup.userId =:userId and myGroup.status = true', {
+        userId: userId,
+      })
+      .select()
+      .getRawOne();
   }
 }
