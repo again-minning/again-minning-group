@@ -9,7 +9,7 @@ import {
   MyGroupSimple,
 } from '../dto/my.group.dto';
 import { MyGroupRepository } from '../repository/my-group.repository';
-import { Connection, QueryRunner, Repository } from 'typeorm';
+import { Connection, EntityManager, Repository } from 'typeorm';
 import { MyGroup } from '../../entities/my.group';
 import { GroupService } from '../../group/service/group.service';
 import { MyGroupWeek } from '../../entities/my.group.week';
@@ -42,24 +42,16 @@ export class MyGroupService {
     myGroupId: number,
     userId: number,
     file: Express.Multer.File,
+    manager: EntityManager,
   ): Promise<void> {
     const myGroup = await this.checkIsMine(myGroupId, userId);
     await this.checkValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
-    const runner = await this.getQueryRunnerAndStartTransaction();
-    try {
-      await runner.manager
-        .getRepository(Image)
-        .save(MyGroupService.createImage(myGroup, file));
-      await runner.manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
-      await runner.commitTransaction();
-    } catch (err) {
-      await runner.rollbackTransaction();
-      console.error(err);
-    } finally {
-      await runner.release();
-    }
+    await manager
+      .getRepository(Image)
+      .save(MyGroupService.createImage(myGroup, file));
+    await manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
   }
 
   public async getMyGroupList(active, userId): Promise<MyGroupSimple[]> {
@@ -71,29 +63,20 @@ export class MyGroupService {
     return this.makeMyGroupResponseList(sampleList);
   }
 
-  public async createMyGroup(req: MyGroupRequest): Promise<MyGroupCreate> {
+  public async createMyGroup(
+    req: MyGroupRequest,
+    manager: EntityManager,
+  ): Promise<MyGroupCreate> {
     await this.isGroup(req.groupId);
     await this.checkIsExistOnActive(req.groupId, req.userId);
-    const runner = await this.getQueryRunnerAndStartTransaction();
-    try {
-      const myGroup = await runner.manager
-        .getRepository(MyGroup)
-        .save(this.createNewMyGroup(req));
-      const weekList: MyGroupWeek[] = this.createWeekList(
-        myGroup,
-        req.weekList,
-      );
-      const savedWeekList = await runner.manager
-        .getRepository(MyGroupWeek)
-        .save(weekList);
-      await runner.commitTransaction();
-      return new MyGroupCreate(myGroup, savedWeekList);
-    } catch (err) {
-      await runner.rollbackTransaction();
-      console.error(err);
-    } finally {
-      await runner.release();
-    }
+    const myGroup = await manager
+      .getRepository(MyGroup)
+      .save(this.createNewMyGroup(req));
+    const weekList: MyGroupWeek[] = this.createWeekList(myGroup, req.weekList);
+    const savedWeekList = await manager
+      .getRepository(MyGroupWeek)
+      .save(weekList);
+    return new MyGroupCreate(myGroup, savedWeekList);
   }
 
   private static checkBooleanQuery(active) {
@@ -159,13 +142,6 @@ export class MyGroupService {
     if (result) {
       throw new BadRequestException(DUPLICATE_MY_GROUP);
     }
-  }
-
-  private async getQueryRunnerAndStartTransaction(): Promise<QueryRunner> {
-    const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    return queryRunner;
   }
 
   private async checkIsMine(
