@@ -30,7 +30,7 @@ export class MyGroup {
   })
   weekList: MyGroupWeek[];
 
-  @ManyToOne(() => Group, (group) => group.myGroupList, { cascade: true })
+  @ManyToOne(() => Group, (group) => group.myGroupList, { cascade: ['update'] })
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 

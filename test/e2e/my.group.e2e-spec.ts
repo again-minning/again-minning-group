@@ -60,4 +60,22 @@ describe('MyGroupController (e2e)', () => {
       });
     }
   });
+
+  describe('오늘_내_그룹_수행현황_조회_e2e', () => {
+    it('/api/v1/my-group/day/status?userId=4 (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/api/v1/my-group/day/status?userId=4')
+        .expect({
+          message: {
+            status: 200,
+            message: '나의 그룹 오늘 수행 현황을 정상적으로 조회하였습니다.',
+          },
+          data: {
+            allCnt: '1',
+            doneCnt: '0',
+          },
+        })
+        .expect(200);
+    });
+  });
 });

@@ -24,8 +24,8 @@ import {
   MY_GROUP_STATUS_OK,
 } from '../../common/response/content/message.my-group';
 import { ResponseMessage } from '../../common/response/response.message';
-import { TransactionInterceptor } from '../../common/transaction.interceptor';
-import { EntityManager } from '../../common/entity.manager.decorator';
+import { TransactionInterceptor } from '../../common/interceptors/transaction.interceptor';
+import { EntityManager } from '../../common/decorators/entity.manager.decorator';
 
 @Controller('/api/v1/my-group')
 export class MyGroupController {
