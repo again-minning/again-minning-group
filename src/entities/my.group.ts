@@ -30,7 +30,7 @@ export class MyGroup {
   })
   weekList: MyGroupWeek[];
 
-  @ManyToOne(() => Group, (group) => group.myGroupList)
+  @ManyToOne(() => Group, (group) => group.myGroupList, { cascade: true })
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
@@ -64,5 +64,6 @@ export class MyGroup {
   public doneDayMyGroup(): void {
     this.isDone = true;
     this.successCnt += 1;
+    this.group.todayCnt += 1;
   }
 }
