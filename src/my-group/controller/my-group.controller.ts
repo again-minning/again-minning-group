@@ -12,6 +12,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MyGroupService } from '../service/my-group.service';
 import {
   MyGroupCreate,
+  MyGroupDoneAndAllCnt,
   MyGroupRequest,
   MyGroupSimple,
 } from '../dto/my.group.dto';
@@ -20,14 +21,26 @@ import {
   DONE_MY_GROUP_OK,
   MY_GROUP_CREATE_OK,
   MY_GROUP_OK,
+  MY_GROUP_STATUS_OK,
 } from '../../common/response/content/message.my-group';
 import { ResponseMessage } from '../../common/response/response.message';
-import { TransactionInterceptor } from '../../common/transaction.interceptor';
-import { EntityManager } from '../../common/entity.manager.decorator';
+import { TransactionInterceptor } from '../../common/interceptors/transaction.interceptor';
+import { EntityManager } from '../../common/decorators/entity.manager.decorator';
 
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Get('/day/status')
+  // Todo -> UseGuard(...)
+  public async getMyGroupDoneStatus(
+    @Query('userId') userId: number,
+  ): Promise<ResponseEntity<MyGroupDoneAndAllCnt>> {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_GROUP_STATUS_OK),
+      await this.myGroupService.getMyGroupDoneStatus(userId),
+    );
+  }
 
   @Post('/done')
   // Todo -> UseGuard(...)

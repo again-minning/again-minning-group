@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { catchError, Observable, tap } from 'rxjs';
 import { Connection } from 'typeorm';
-import { SEVER_ERROR } from './response/content/message.common';
+import { SEVER_ERROR } from '../response/content/message.common';
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {

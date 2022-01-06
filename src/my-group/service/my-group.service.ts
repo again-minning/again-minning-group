@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   MyGroupCreate,
+  MyGroupDoneAndAllCnt,
   MyGroupRequest,
   MyGroupSimple,
 } from '../dto/my.group.dto';
@@ -191,5 +192,13 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
+  }
+
+  public async getMyGroupDoneStatus(
+    userId: number,
+  ): Promise<MyGroupDoneAndAllCnt> {
+    return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(
+      userId,
+    );
   }
 }
