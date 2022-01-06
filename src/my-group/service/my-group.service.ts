@@ -194,7 +194,7 @@ export class MyGroupService {
     return image;
   }
 
-  public async getMyGroupStatusList(
+  public async getMyGroupDoneStatus(
     userId: number,
   ): Promise<MyGroupDoneAndAllCnt> {
     return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(

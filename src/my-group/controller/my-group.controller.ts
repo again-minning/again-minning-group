@@ -33,12 +33,12 @@ export class MyGroupController {
 
   @Get('/day/status')
   // Todo -> UseGuard(...)
-  public async getMyGroupStatusList(
+  public async getMyGroupDoneStatus(
     @Query('userId') userId: number,
   ): Promise<ResponseEntity<MyGroupDoneAndAllCnt>> {
     return ResponseEntity.OK_WITH(
       new ResponseMessage(HttpStatus.OK, MY_GROUP_STATUS_OK),
-      await this.myGroupService.getMyGroupStatusList(userId),
+      await this.myGroupService.getMyGroupDoneStatus(userId),
     );
   }
 
