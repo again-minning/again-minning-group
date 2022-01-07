@@ -17,6 +17,12 @@ import {
 } from '../template/my.group.template';
 import { MyGroup } from '../../src/entities/my.group';
 import { Week } from '../../src/common/enum/week';
+import {
+  INVALID_DATE,
+  INVALID_IMAGE,
+  INVALID_TIME,
+  IS_DONE,
+} from '../../src/common/response/content/message.my-group';
 
 describe('MyGroupService', () => {
   let myGroupService: MyGroupService;
@@ -109,36 +115,37 @@ describe('MyGroupService', () => {
   });
 
   it('수행시간이_아닌_경우_테스트', () => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('2022-01-02T10:20:30Z').getTime());
-    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
-      BadRequestException,
-    );
+    const date = new Date('2022-01-02T15:00:00.000');
+    try {
+      myGroupService['checkIsValidTime'](date);
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(INVALID_TIME));
+    }
   });
 
   it('수행요일이_아닌_경우_테스트', () => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
-    myGroup2.weekList[0].week = Week.WED;
-    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
-      BadRequestException,
-    );
+    const date = new Date('2022-01-02T06:00:00.000');
+    try {
+      myGroupService['checkDayIsInclude'](date, [Week.WED]);
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(INVALID_DATE));
+    }
   });
 
   it('이미_수행한_경우_테스트', () => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
-    myGroup2.isDone = true;
-    expect(myGroupService['checkValid'](myGroup2, mockFile)).rejects.toThrow(
-      BadRequestException,
-    );
+    try {
+      myGroup2.isDone = true;
+      myGroupService['checkIsDone'](myGroup2);
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(IS_DONE));
+    }
   });
 
   it('이미지가_없는_경우_테스트', () => {
-    jest.useFakeTimers('modern');
-    jest.setSystemTime(new Date('2022-01-02T06:00:30Z').getTime());
-    expect(myGroupService['checkValid'](myGroup2, null)).rejects.toThrow(
-      BadRequestException,
-    );
+    try {
+      myGroupService['checkFileIsNotNull'](mockFile);
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(INVALID_IMAGE));
+    }
   });
 });

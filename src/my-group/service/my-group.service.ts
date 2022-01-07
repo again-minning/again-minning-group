@@ -59,7 +59,7 @@ export class MyGroupService {
     manager: EntityManager,
   ): Promise<void> {
     const myGroup = await this.findMyGroup(myGroupId, userId);
-    await this.checkValid(myGroup, file);
+    this.checkDoneRequestIsValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
     await manager
@@ -181,22 +181,41 @@ export class MyGroupService {
       throw new NotFoundException(MY_GROUP_NOT_FOUND);
     }
   }
-  private async checkValid(myGroup: MyGroup, file: Express.Multer.File) {
+  private checkDoneRequestIsValid(
+    myGroup: MyGroup,
+    file: Express.Multer.File,
+  ): void {
     const date = new Date();
-    const hour = date.getHours();
-    const day = date.getDay();
     const weekList = myGroup.weekList.map((myWeek) => {
       return Number(Week[myWeek.week]);
     });
+    this.checkIsValidTime(date);
+    this.checkDayIsInclude(date, weekList);
+    this.checkIsDone(myGroup);
+    this.checkFileIsNotNull(file);
+  }
+
+  private checkIsValidTime(date: Date): void {
+    const hour = date.getHours();
     if (!(hour <= 8 && hour >= 5)) {
       throw new BadRequestException(INVALID_TIME);
     }
+  }
+
+  private checkDayIsInclude(date: Date, weekList: Week[]): void {
+    const day = date.getDay();
     if (!weekList.includes(day)) {
       throw new BadRequestException(INVALID_DATE);
     }
+  }
+
+  private checkIsDone(myGroup: MyGroup): void {
     if (myGroup.isDone) {
       throw new BadRequestException(IS_DONE);
     }
+  }
+
+  private checkFileIsNotNull(file: Express.Multer.File): void {
     if (!file) {
       throw new BadRequestException(INVALID_IMAGE);
     }
