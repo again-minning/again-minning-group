@@ -19,7 +19,10 @@ export class Image {
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
-  @ManyToOne(() => MyGroup, (myGroup) => myGroup.imageList, { primary: true })
+  @ManyToOne(() => MyGroup, (myGroup) => myGroup.imageList, {
+    primary: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([{ name: 'my_group_id', referencedColumnName: 'myGroupId' }])
   myGroup: MyGroup;
 

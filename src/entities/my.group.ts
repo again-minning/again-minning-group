@@ -20,14 +20,10 @@ export class MyGroup {
   @Column({ type: 'bigint', name: 'user_id' })
   userId: number;
 
-  @OneToMany(() => Image, (imageList) => imageList.myGroup, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Image, (imageList) => imageList.myGroup)
   imageList: Image[];
 
-  @OneToMany(() => MyGroupWeek, (weekList) => weekList.myGroup, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => MyGroupWeek, (weekList) => weekList.myGroup)
   weekList: MyGroupWeek[];
 
   @ManyToOne(() => Group, (group) => group.myGroupList, { cascade: ['update'] })
