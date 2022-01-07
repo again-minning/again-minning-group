@@ -20,8 +20,10 @@ import { Week } from '../../src/common/enum/week';
 import {
   INVALID_DATE,
   INVALID_IMAGE,
+  INVALID_MY_GROUP_ID,
   INVALID_TIME,
   IS_DONE,
+  MY_GROUP_NOT_FOUND,
 } from '../../src/common/response/content/message.my-group';
 
 describe('MyGroupService', () => {
@@ -146,6 +148,22 @@ describe('MyGroupService', () => {
       myGroupService['checkFileIsNotNull'](mockFile);
     } catch (err) {
       expect(err).toEqual(new BadRequestException(INVALID_IMAGE));
+    }
+  });
+
+  it('나의그룹_없는_경우_테스트', () => {
+    try {
+      myGroupService['checkIsNotNull'](null);
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(MY_GROUP_NOT_FOUND));
+    }
+  });
+
+  it('나의그룹이_아닌_경우_테스트', () => {
+    try {
+      myGroupService['checkIsMine'](myGroup2, 2); // myGroup2.userId = 4
+    } catch (err) {
+      expect(err).toEqual(new BadRequestException(INVALID_MY_GROUP_ID));
     }
   });
 });
