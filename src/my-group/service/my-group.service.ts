@@ -39,13 +39,26 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async getMyGroupDoneStatus(
+    userId: number,
+  ): Promise<MyGroupDoneAndAllCnt> {
+    return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(
+      userId,
+    );
+  }
+
+  public async deleteMyGroup(myGroupId: number, userId: number): Promise<void> {
+    const myGroup = await this.findMyGroup(myGroupId, userId);
+    await this.myGroupRepository.remove(myGroup);
+  }
+
   public async doneDayMyGroup(
     myGroupId: number,
     userId: number,
     file: Express.Multer.File,
     manager: EntityManager,
   ): Promise<void> {
-    const myGroup = await this.checkIsMine(myGroupId, userId);
+    const myGroup = await this.findMyGroup(myGroupId, userId);
     await this.checkValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
@@ -145,22 +158,29 @@ export class MyGroupService {
     }
   }
 
-  private async checkIsMine(
+  private async findMyGroup(
     myGroupId: number,
     userId: number,
   ): Promise<MyGroup> {
     const myGroup = await this.myGroupRepository.findOne(myGroupId, {
       relations: ['group', 'weekList'],
     });
-    if (!myGroup) {
-      throw new NotFoundException(MY_GROUP_NOT_FOUND);
-    }
-    if (myGroup.userId != userId) {
-      throw new BadRequestException(INVALID_MY_GROUP_ID);
-    }
+    this.checkIsNotNull(myGroup);
+    this.checkIsMine(myGroup, userId);
     return myGroup;
   }
 
+  private checkIsMine(myGroup: MyGroup, userId: number): void {
+    if (myGroup.userId != userId) {
+      throw new BadRequestException(INVALID_MY_GROUP_ID);
+    }
+  }
+
+  private checkIsNotNull(myGroup: MyGroup): void {
+    if (!myGroup) {
+      throw new NotFoundException(MY_GROUP_NOT_FOUND);
+    }
+  }
   private async checkValid(myGroup: MyGroup, file: Express.Multer.File) {
     const date = new Date();
     const hour = date.getHours();
@@ -192,13 +212,5 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
-  }
-
-  public async getMyGroupDoneStatus(
-    userId: number,
-  ): Promise<MyGroupDoneAndAllCnt> {
-    return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(
-      userId,
-    );
   }
 }

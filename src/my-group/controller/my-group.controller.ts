@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -20,6 +21,7 @@ import { ResponseEntity } from '../../common/response/response.entity';
 import {
   DONE_MY_GROUP_OK,
   MY_GROUP_CREATE_OK,
+  MY_GROUP_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
 } from '../../common/response/content/message.my-group';
@@ -30,6 +32,16 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Delete('')
+  // Todo -> UseGuard(...)
+  public async deleteMyGroup(
+    @Query('myGroupId') myGroupId: number,
+    @Query('userId') userId: number,
+  ): Promise<ResponseMessage> {
+    await this.myGroupService.deleteMyGroup(myGroupId, userId);
+    return ResponseEntity.OK(MY_GROUP_DELETE_OK);
+  }
 
   @Get('/day/status')
   // Todo -> UseGuard(...)
