@@ -14,3 +14,7 @@ it('수행요일이_아닌_경우_테스트', () => {
 위 처럼 try catch로 감싼뒤 catch되는 error가 예상하는 exception가 같은지 비교하면 된다.  
 똑같은 Exception이라도 Message가 다르면 toEqual에 의해 실패처리가 된다.  
 이유는 Exception을 비교하는 것이 아니라 객체를 비교하듯이 비교하기 때문이다.
+
+---
+참고자료  
+https://hdevstudy.tistory.com/133
