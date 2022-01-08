@@ -21,7 +21,6 @@ import {
   INVALID_DATE,
   INVALID_IMAGE,
   INVALID_MY_GROUP_ID,
-  INVALID_TIME,
   IS_DONE,
   MY_GROUP_NOT_FOUND,
   NOT_EXIST_GROUP,
@@ -39,14 +38,27 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async getMyGroupDoneStatus(
+    userId: number,
+  ): Promise<MyGroupDoneAndAllCnt> {
+    return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(
+      userId,
+    );
+  }
+
+  public async deleteMyGroup(myGroupId: number, userId: number): Promise<void> {
+    const myGroup = await this.findMyGroup(myGroupId, userId);
+    await this.myGroupRepository.remove(myGroup);
+  }
+
   public async doneDayMyGroup(
     myGroupId: number,
     userId: number,
     file: Express.Multer.File,
     manager: EntityManager,
   ): Promise<void> {
-    const myGroup = await this.checkIsMine(myGroupId, userId);
-    await this.checkValid(myGroup, file);
+    const myGroup = await this.findMyGroup(myGroupId, userId);
+    this.checkDoneRequestIsValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
     await manager
@@ -145,38 +157,57 @@ export class MyGroupService {
     }
   }
 
-  private async checkIsMine(
+  private async findMyGroup(
     myGroupId: number,
     userId: number,
   ): Promise<MyGroup> {
     const myGroup = await this.myGroupRepository.findOne(myGroupId, {
       relations: ['group', 'weekList'],
     });
-    if (!myGroup) {
-      throw new NotFoundException(MY_GROUP_NOT_FOUND);
-    }
-    if (myGroup.userId != userId) {
-      throw new BadRequestException(INVALID_MY_GROUP_ID);
-    }
+    this.checkIsNotNull(myGroup);
+    this.checkIsMine(myGroup, userId);
     return myGroup;
   }
 
-  private async checkValid(myGroup: MyGroup, file: Express.Multer.File) {
+  private checkIsMine(myGroup: MyGroup, userId: number): void {
+    if (myGroup.userId != userId) {
+      throw new BadRequestException(INVALID_MY_GROUP_ID);
+    }
+  }
+
+  private checkIsNotNull(myGroup: MyGroup): void {
+    if (!myGroup) {
+      throw new NotFoundException(MY_GROUP_NOT_FOUND);
+    }
+  }
+  private checkDoneRequestIsValid(
+    myGroup: MyGroup,
+    file: Express.Multer.File,
+  ): void {
     const date = new Date();
-    const hour = date.getHours();
-    const day = date.getDay();
     const weekList = myGroup.weekList.map((myWeek) => {
       return Number(Week[myWeek.week]);
     });
-    if (!(hour <= 8 && hour >= 5)) {
-      throw new BadRequestException(INVALID_TIME);
-    }
+    myGroup.group.checkTime();
+    this.checkDayIsInclude(date, weekList);
+    this.checkIsDone(myGroup);
+    this.checkFileIsNotNull(file);
+  }
+
+  private checkDayIsInclude(date: Date, weekList: Week[]): void {
+    const day = date.getDay();
     if (!weekList.includes(day)) {
       throw new BadRequestException(INVALID_DATE);
     }
+  }
+
+  private checkIsDone(myGroup: MyGroup): void {
     if (myGroup.isDone) {
       throw new BadRequestException(IS_DONE);
     }
+  }
+
+  private checkFileIsNotNull(file: Express.Multer.File): void {
     if (!file) {
       throw new BadRequestException(INVALID_IMAGE);
     }
@@ -192,13 +223,5 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
-  }
-
-  public async getMyGroupDoneStatus(
-    userId: number,
-  ): Promise<MyGroupDoneAndAllCnt> {
-    return await this.myGroupRepository.countAllCntAndDoneCntByStatusTrueAndUserId(
-      userId,
-    );
   }
 }

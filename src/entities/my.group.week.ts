@@ -9,7 +9,10 @@ export class MyGroupWeek {
     this.week = week;
   }
 
-  @ManyToOne(() => MyGroup, (myGroup) => myGroup.weekList, { primary: true })
+  @ManyToOne(() => MyGroup, (myGroup) => myGroup.weekList, {
+    primary: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([{ name: 'my_group_id', referencedColumnName: 'myGroupId' }])
   myGroup: MyGroup;
 

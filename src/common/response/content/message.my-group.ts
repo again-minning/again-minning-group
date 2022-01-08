@@ -12,3 +12,4 @@ export const INVALID_DATE = '수행하는 날이 아닙니다.';
 export const INVALID_IMAGE = '이미지가 비어있습니다.';
 export const MY_GROUP_STATUS_OK =
   '나의 그룹 오늘 수행 현황을 정상적으로 조회하였습니다.';
+export const MY_GROUP_DELETE_OK = '정상적으로 나의 그룹이 삭제되었습니다.';
