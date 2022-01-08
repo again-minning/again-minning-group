@@ -21,7 +21,6 @@ import {
   INVALID_DATE,
   INVALID_IMAGE,
   INVALID_MY_GROUP_ID,
-  INVALID_TIME,
   IS_DONE,
   MY_GROUP_NOT_FOUND,
   NOT_EXIST_GROUP,
@@ -189,17 +188,10 @@ export class MyGroupService {
     const weekList = myGroup.weekList.map((myWeek) => {
       return Number(Week[myWeek.week]);
     });
-    this.checkIsValidTime(date);
+    myGroup.group.checkTime();
     this.checkDayIsInclude(date, weekList);
     this.checkIsDone(myGroup);
     this.checkFileIsNotNull(file);
-  }
-
-  private checkIsValidTime(date: Date): void {
-    const hour = date.getHours();
-    if (!(hour <= 8 && hour >= 5)) {
-      throw new BadRequestException(INVALID_TIME);
-    }
   }
 
   private checkDayIsInclude(date: Date, weekList: Week[]): void {

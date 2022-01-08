@@ -7,6 +7,8 @@ group1.title = '러닝하기';
 group1.category = 3;
 group2.groupId = 2;
 group2.category = 4;
+group2.startTime = '07:20';
+group2.endTime = '07:30';
 
 export const groupAllList: Group[] = [group1, group2];
 export const groupListByHealth: Group[] = [group1];

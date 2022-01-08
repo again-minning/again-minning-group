@@ -117,9 +117,12 @@ describe('MyGroupService', () => {
   });
 
   it('수행시간이_아닌_경우_테스트', () => {
-    const date = new Date('2022-01-02T15:00:00.000');
+    const date = new Date();
+    date.setHours(7, 19, 0, 0);
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(date.getTime());
     try {
-      myGroupService['checkIsValidTime'](date);
+      myGroup2.group.checkTime();
     } catch (err) {
       expect(err).toEqual(new BadRequestException(INVALID_TIME));
     }

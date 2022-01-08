@@ -9,6 +9,8 @@ import {
 import { MyGroup } from './my.group';
 import { Image } from './image';
 import { Category } from '../common/enum/category';
+import { BadRequestException } from '@nestjs/common';
+import { INVALID_TIME } from '../common/response/content/message.my-group';
 
 @Entity()
 export class Group {
@@ -59,4 +61,17 @@ export class Group {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  public checkTime(): void {
+    const dateTime = new Date().getTime();
+    const startHour = parseInt(this.startTime.slice(0, 2));
+    const endHour = parseInt(this.startTime.slice(0, 2));
+    const startMin = parseInt(this.startTime.slice(3, 5));
+    const endMin = parseInt(this.startTime.slice(3, 5));
+    const startTime = new Date().setHours(startHour, startMin, 0, 0);
+    const endTime = new Date().setHours(endHour, endMin, 0, 0);
+    if (!(startTime <= dateTime && dateTime <= endTime)) {
+      throw new BadRequestException(INVALID_TIME);
+    }
+  }
 }
