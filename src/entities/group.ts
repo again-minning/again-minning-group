@@ -48,6 +48,12 @@ export class Group {
   @Column({ type: 'int' })
   todayCnt: number;
 
+  @Column({ type: 'varchar' })
+  startTime: string;
+
+  @Column({ type: 'varchar' })
+  endTime: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
