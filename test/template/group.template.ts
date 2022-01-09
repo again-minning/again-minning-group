@@ -21,7 +21,7 @@ export const ALL_GROUP_LIST = {
     {
       title: '하루 한 잔 물 마시기',
       avgRate: 0,
-      memberCnt: 12,
+      memberCnt: 4,
       category: '4',
     },
     {
@@ -77,13 +77,13 @@ export const GROUP_DETAIL_E2E = {
     groupId: '1',
     category: '4',
     title: '하루 한 잔 물 마시기',
-    memberCnt: 12,
+    memberCnt: 4,
     avgRate: 0,
     pictureDescription: '물 사진',
     ruleDescription: '물 한 잔을 마셔주세요.',
     description: '하루 한 잔의 물을 마시는 그룹',
     recommendation: '물을 꾸준히 마셔보세요',
-    todayCnt: 0,
+    todayCnt: 3,
     imageList: [],
   },
   message: {

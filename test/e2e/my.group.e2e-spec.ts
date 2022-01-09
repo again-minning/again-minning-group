@@ -2,9 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { req, req2 } from '../template/my.group.template';
+import { detailResult, req, req2 } from '../template/my.group.template';
 import { Connection, getConnection } from 'typeorm';
-import { sqlGroup, sqlMyGroup } from '../template/sql';
+import {
+  sqlGroup,
+  sqlImage,
+  sqlMyGroup,
+  sqlMyGroupWeek,
+} from '../template/sql';
 
 describe('MyGroupController (e2e)', () => {
   let app: INestApplication;
@@ -17,6 +22,8 @@ describe('MyGroupController (e2e)', () => {
     const runner = connection.createQueryRunner('master');
     await runner.query(sqlGroup);
     await runner.query(sqlMyGroup);
+    await runner.query(sqlMyGroupWeek);
+    await runner.query(sqlImage);
     await app.init();
   });
 
@@ -75,6 +82,15 @@ describe('MyGroupController (e2e)', () => {
             doneCnt: '0',
           },
         })
+        .expect(200);
+    });
+  });
+
+  describe('내_그룹_상세조회_성공_e2e', () => {
+    it('/api/v1/my-group/detail?myGroupId=2 (GET)', () => {
+      return request(app.getHttpServer())
+        .get('/api/v1/my-group/detail?myGroupId=2')
+        .expect(detailResult)
         .expect(200);
     });
   });
