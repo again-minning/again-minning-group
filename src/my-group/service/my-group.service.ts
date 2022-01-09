@@ -81,7 +81,6 @@ export class MyGroupService {
       .getRepository(Image)
       .save(MyGroupService.createImage(myGroup, file));
     await manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
-    throw Error('ㅗ');
   }
 
   public async getMyGroupList(active, userId): Promise<MyGroupSimple[]> {
