@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from './group';
@@ -12,7 +13,7 @@ import { MyGroup } from './my.group';
 
 @Entity()
 export class Image {
-  @PrimaryColumn({ type: 'bigint', primary: true })
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   imageId: number;
 
   @PrimaryColumn({ type: 'bigint', primary: true })

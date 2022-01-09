@@ -56,7 +56,9 @@ export class MyGroupRepository extends Repository<MyGroup> {
     return this.createQueryBuilder('mg')
       .leftJoinAndSelect('mg.group', 'g')
       .leftJoinAndSelect('mg.weekList', 'weekList')
-      .where('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
+      .where('mg.myGroupId =:myGroupId', {
+        myGroupId: myGroupId,
+      })
       .getOne();
   }
 }

@@ -79,6 +79,7 @@ export class MyGroupDetail {
     this.todayCnt = myGroup.group.todayCnt;
     this.myRate = myGroup.rate;
     this.dayList = myGroup.weekList.map((myWeek) => myWeek.week);
+    this.startDate = myGroup.createdAt;
     this.lateDate = myGroup.lastDate;
     this.alarmTime = myGroup.alarmTime;
     this.imageList = imageList;
@@ -93,6 +94,7 @@ export class MyGroupDetail {
   dayList: Week[];
   todayCnt: number;
   myRate: string;
+  startDate: Date;
   lateDate: Date;
   alarmTime: string;
   imageList: ImageDto[];

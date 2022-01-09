@@ -58,6 +58,7 @@ export const detailResult = {
     todayCnt: 3,
     myRate: 0,
     dayList: ['0', '5'],
+    startDate: '2022-01-01T19:19:36.540Z',
     lateDate: '2022-01-04',
     alarmTime: '7',
     imageList: [

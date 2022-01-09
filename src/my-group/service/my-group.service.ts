@@ -41,9 +41,16 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
-  public async getMyGroupDetail(myGroupId: number): Promise<MyGroupDetail> {
+  public async getMyGroupDetail(
+    myGroupId: number,
+    userId: number,
+  ): Promise<MyGroupDetail> {
     const myGroup = await this.myGroupRepository.findOneWithGroup(myGroupId);
-    const imageList = await this.imageRepository.findAllByMyGroupId(myGroupId);
+    this.checkIsNotNull(myGroup);
+    this.checkIsMine(myGroup, userId);
+    const imageList = myGroup.status
+      ? await this.imageRepository.findAllByMyGroupId(myGroupId)
+      : await this.imageRepository.findAllByUserIdAndGroupId(userId, myGroupId);
     return new MyGroupDetail(myGroup, imageList);
   }
 
@@ -70,8 +77,11 @@ export class MyGroupService {
     this.checkDoneRequestIsValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
-    await this.imageRepository.save(MyGroupService.createImage(myGroup, file));
+    await manager
+      .getRepository(Image)
+      .save(MyGroupService.createImage(myGroup, file));
     await manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
+    throw Error('ㅗ');
   }
 
   public async getMyGroupList(active, userId): Promise<MyGroupSimple[]> {

@@ -27,19 +27,25 @@ export class ImageRepository extends Repository<Image> {
       .leftJoin('i.myGroup', 'mg')
       .limit(IMAGE_LIMIT)
       .where('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
-      .andWhere('mg.myGroupId >:lastId', { lastId: lastId })
+      .andWhere('i.imageId >:lastId', { lastId: lastId })
       .orderBy('i.createdAt', order)
       .getRawMany();
   }
 
-  async findAllByUserId(userId: number, lastId = 0): Promise<ImageDto[]> {
+  async findAllByUserIdAndGroupId(
+    userId: number,
+    myGroupId: number,
+    lastId = 0,
+    order = Order.DESC,
+  ): Promise<ImageDto[]> {
     return this.createQueryBuilder('i')
       .select('i.imageId, i.url, i.createdAt')
-      .leftJoin('i.userId', 'u')
+      .leftJoin('i.myGroup', 'mg')
       .limit(IMAGE_LIMIT)
-      .where('u.userId =:userId', { userId: userId })
-      .andWhere('u.userId >:lastId', { lastId: lastId })
-      .orderBy('i.createdAt', 'DESC')
+      .where('i.userId =:userId', { userId: userId })
+      .andWhere('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
+      .andWhere('i.imageId >:lastId', { lastId: lastId })
+      .orderBy('i.createdAt', order)
       .getRawMany();
   }
 }

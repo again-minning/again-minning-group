@@ -38,10 +38,11 @@ export class MyGroupController {
   @Get('/detail')
   public async getMyGroupDetail(
     @Query('myGroupId') myGroupId: number,
+    @Query('userId') userId: number,
   ): Promise<ResponseEntity<MyGroupDetail>> {
     return ResponseEntity.OK_WITH(
       new ResponseMessage(HttpStatus.OK, MY_GROUP_DETAIL_OK),
-      await this.myGroupService.getMyGroupDetail(myGroupId),
+      await this.myGroupService.getMyGroupDetail(myGroupId, userId),
     );
   }
 

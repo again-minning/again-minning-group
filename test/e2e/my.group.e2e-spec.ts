@@ -86,10 +86,20 @@ describe('MyGroupController (e2e)', () => {
     });
   });
 
-  describe('내_그룹_상세조회_성공_e2e', () => {
-    it('/api/v1/my-group/detail?myGroupId=2 (GET)', () => {
+  describe('내_그룹_상세조회(진행중)_성공_e2e', () => {
+    it('/api/v1/my-group/detail?myGroupId=2&userId=4 (GET)', () => {
       return request(app.getHttpServer())
-        .get('/api/v1/my-group/detail?myGroupId=2')
+        .get('/api/v1/my-group/detail?myGroupId=2&userId=4')
+        .expect(detailResult)
+        .expect(200);
+    });
+  });
+
+  describe('내_그룹_상세조회(종료)_성공_e2e', () => {
+    it('/api/v1/my-group/detail?myGroupId=3&userId=4 (GET)', () => {
+      detailResult.data.imageList = [];
+      return request(app.getHttpServer())
+        .get('/api/v1/my-group/detail?myGroupId=3&userId=4')
         .expect(detailResult)
         .expect(200);
     });
