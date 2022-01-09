@@ -25,6 +25,7 @@ import {
   IS_DONE,
   MY_GROUP_NOT_FOUND,
 } from '../../src/common/response/content/message.my-group';
+import { ImageRepository } from '../../src/image/image.repository';
 
 describe('MyGroupService', () => {
   let myGroupService: MyGroupService;
@@ -48,6 +49,10 @@ describe('MyGroupService', () => {
   const mockMyGroupWeekRepository = {
     save: jest.fn().mockResolvedValue([myGroupWeek1, myGroupWeek2]),
     create: jest.fn(),
+  };
+
+  const mockImageRepository = {
+    findAllByGroupId: jest.fn().mockResolvedValue([{}, {}]), // 더미 이미지 2개
   };
 
   const mockConnection = () => ({
@@ -83,6 +88,10 @@ describe('MyGroupService', () => {
         {
           provide: getRepositoryToken(GroupRepository),
           useValue: mockGroupRepository,
+        },
+        {
+          provide: getRepositoryToken(ImageRepository),
+          useValue: mockImageRepository,
         },
         {
           provide: getRepositoryToken(MyGroupWeek),
