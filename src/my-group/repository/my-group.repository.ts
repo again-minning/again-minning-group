@@ -51,4 +51,12 @@ export class MyGroupRepository extends Repository<MyGroup> {
       .select()
       .getRawOne();
   }
+
+  public async findOneWithGroup(myGroupId: number): Promise<MyGroup> {
+    return this.createQueryBuilder('mg')
+      .leftJoinAndSelect('mg.group', 'g')
+      .leftJoinAndSelect('mg.weekList', 'weekList')
+      .where('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
+      .getOne();
+  }
 }

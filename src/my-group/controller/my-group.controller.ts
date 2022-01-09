@@ -13,6 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MyGroupService } from '../service/my-group.service';
 import {
   MyGroupCreate,
+  MyGroupDetail,
   MyGroupDoneAndAllCnt,
   MyGroupRequest,
   MyGroupSimple,
@@ -22,6 +23,7 @@ import {
   DONE_MY_GROUP_OK,
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
+  MY_GROUP_DETAIL_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
 } from '../../common/response/content/message.my-group';
@@ -32,6 +34,16 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Get('/detail')
+  public async getMyGroupDetail(
+    @Query('myGroupId') myGroupId: number,
+  ): Promise<ResponseEntity<MyGroupDetail>> {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_GROUP_DETAIL_OK),
+      await this.myGroupService.getMyGroupDetail(myGroupId),
+    );
+  }
 
   @Delete('')
   // Todo -> UseGuard(...)

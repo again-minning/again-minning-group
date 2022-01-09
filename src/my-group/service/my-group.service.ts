@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   MyGroupCreate,
+  MyGroupDetail,
   MyGroupDoneAndAllCnt,
   MyGroupRequest,
   MyGroupSimple,
@@ -27,16 +28,24 @@ import {
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
 import { Image } from '../../entities/image';
+import { ImageRepository } from '../../image/image.repository';
 
 @Injectable()
 export class MyGroupService {
   constructor(
     private myGroupRepository: MyGroupRepository,
+    private imageRepository: ImageRepository,
     private connection: Connection,
     private groupService: GroupService,
     @InjectRepository(MyGroupWeek)
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
+
+  public async getMyGroupDetail(myGroupId: number): Promise<MyGroupDetail> {
+    const myGroup = await this.myGroupRepository.findOneWithGroup(myGroupId);
+    const imageList = await this.imageRepository.findAllByMyGroupId(myGroupId);
+    return new MyGroupDetail(myGroup, imageList);
+  }
 
   public async getMyGroupDoneStatus(
     userId: number,
@@ -61,9 +70,7 @@ export class MyGroupService {
     this.checkDoneRequestIsValid(myGroup, file);
     myGroup.doneDayMyGroup();
     delete myGroup.weekList; // my_group_week로 알 수 없는 update query가 나가서 일단 제거로 해결
-    await manager
-      .getRepository(Image)
-      .save(MyGroupService.createImage(myGroup, file));
+    await this.imageRepository.save(MyGroupService.createImage(myGroup, file));
     await manager.getRepository(MyGroup).save(myGroup); // don't work save without select..
   }
 

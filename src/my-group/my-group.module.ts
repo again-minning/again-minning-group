@@ -5,11 +5,11 @@ import { GroupModule } from '../group/group.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MyGroupRepository } from './repository/my-group.repository';
 import { MyGroupWeek } from '../entities/my.group.week';
-import { Image } from '../entities/image';
+import { ImageRepository } from '../image/image.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MyGroupRepository, MyGroupWeek, Image]),
+    TypeOrmModule.forFeature([MyGroupRepository, MyGroupWeek, ImageRepository]),
     GroupModule,
   ],
   controllers: [MyGroupController],
