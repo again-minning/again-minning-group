@@ -78,6 +78,7 @@ export class MyGroupDetail {
     this.ruleDescription = myGroup.group.ruleDescription;
     this.todayCnt = myGroup.group.todayCnt;
     this.myRate = myGroup.rate;
+    this.isDone = myGroup.isDone;
     this.dayList = myGroup.weekList.map((myWeek) => myWeek.week);
     this.startDate = myGroup.createdAt;
     this.lateDate = myGroup.lastDate;
@@ -94,6 +95,7 @@ export class MyGroupDetail {
   dayList: Week[];
   todayCnt: number;
   myRate: string;
+  isDone: boolean;
   startDate: Date;
   lateDate: Date;
   alarmTime: string;

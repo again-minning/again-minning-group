@@ -57,6 +57,7 @@ export const detailResult = {
     ruleDescription: '최소 1KM를 뛰어주세요.',
     todayCnt: 3,
     myRate: 0,
+    isDone: false,
     dayList: ['0', '5'],
     startDate: '2022-01-01T19:19:36.540Z',
     lateDate: '2022-01-04',
