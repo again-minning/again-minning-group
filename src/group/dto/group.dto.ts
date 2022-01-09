@@ -1,6 +1,6 @@
 import { Category } from '../../common/enum/category';
 import { Group } from '../../entities/group';
-import { Image } from '../../entities/image';
+import { ImageDto } from '../../image/image.dto';
 
 export class GroupResponseDto {
   constructor(group: Group) {
@@ -40,15 +40,4 @@ export class GroupDetail {
   recommendation: string;
   todayCnt: number;
   imageList: ImageDto[];
-}
-
-export class ImageDto {
-  constructor(image: Image) {
-    this.imageId = image.imageId;
-    this.url = image.url;
-    this.createdAt = image.createdAt;
-  }
-  imageId: number;
-  url: string;
-  createdAt: string;
 }
