@@ -41,10 +41,7 @@ describe('MyGroupService', () => {
     findOne: jest.fn().mockResolvedValue(myGroup2),
   };
   const mockGroupRepository = {
-    existById: jest
-      .fn()
-      .mockResolvedValueOnce(false)
-      .mockResolvedValueOnce(true),
+    existById: jest.fn().mockResolvedValueOnce(true),
   };
   const mockMyGroupWeekRepository = {
     save: jest.fn().mockResolvedValue([myGroupWeek1, myGroupWeek2]),
@@ -103,10 +100,6 @@ describe('MyGroupService', () => {
 
     myGroupService = module.get<MyGroupService>(MyGroupService);
     connection = module.get<Connection>(Connection);
-  });
-
-  it('그룹이_존재하지_않는_경우', () => {
-    expect(myGroupService['isGroup'](2)).rejects.toThrow(BadRequestException);
   });
 
   it('진행중인_my_group_존재하는_경우', () => {

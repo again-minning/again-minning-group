@@ -7,7 +7,7 @@ import {
   groupAllList,
   groupListByHealth,
 } from '../template/group.template';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ImageRepository } from '../../src/image/image.repository';
 
 describe('GroupService', () => {
@@ -21,6 +21,7 @@ describe('GroupService', () => {
       .fn()
       .mockResolvedValueOnce(GROUP_DETAIL)
       .mockResolvedValueOnce(null),
+    existById: jest.fn().mockResolvedValueOnce(false),
   };
 
   const mockImageRepository = {
@@ -71,7 +72,11 @@ describe('GroupService', () => {
     });
   });
 
-  describe('없은_그룹_조회', () => {
+  it('그룹이_존재하지_않는_경우', () => {
+    expect(service['checkExistById'](2)).rejects.toThrow(BadRequestException);
+  });
+
+  describe('없는_그룹_조회', () => {
     it('없는 그룹을 조회하고 NotFoundException이 발생해야 한다.', () => {
       jest.spyOn(repository, 'findOne');
       expect(service.getGroupDetail(0)).rejects.toThrow(NotFoundException);

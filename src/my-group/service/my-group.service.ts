@@ -24,7 +24,6 @@ import {
   INVALID_MY_GROUP_ID,
   IS_DONE,
   MY_GROUP_NOT_FOUND,
-  NOT_EXIST_GROUP,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
 import { Image } from '../../entities/image';
@@ -96,7 +95,7 @@ export class MyGroupService {
     req: MyGroupRequest,
     manager: EntityManager,
   ): Promise<MyGroupCreate> {
-    await this.isGroup(req.groupId);
+    await this.groupService.checkExistById(req.groupId);
     await this.checkIsExistOnActive(req.groupId, req.userId);
     const myGroup = await manager
       .getRepository(MyGroup)
@@ -157,13 +156,6 @@ export class MyGroupService {
     const startDateTime = new Date(start).setHours(9, 0, 0, 0);
     const time = dateTime - startDateTime;
     return Math.floor(time / 1000 / 60 / 60 / 24 + 1);
-  }
-
-  private async isGroup(groupId: number) {
-    const result = await this.groupService.existById(groupId);
-    if (!result) {
-      throw new BadRequestException(NOT_EXIST_GROUP);
-    }
   }
 
   private async checkIsExistOnActive(groupId: number, userId: number) {

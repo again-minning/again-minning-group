@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GroupRepository } from '../repository/group.repository';
 import { Group } from '../../entities/group';
 import { GroupDetail, GroupResponseDto } from '../dto/group.dto';
 import { Category } from '../../common/enum/category';
 import { GROUP_NOT_FOUND } from '../../common/response/content/message.group';
 import { ImageRepository } from '../../image/image.repository';
+import { NOT_EXIST_GROUP } from '../../common/response/content/message.my-group';
 
 @Injectable()
 export class GroupService {
@@ -29,7 +34,10 @@ export class GroupService {
     return new GroupDetail(group, imageList);
   }
 
-  public async existById(groupId: number): Promise<boolean> {
-    return await this.groupRepository.existById(groupId);
+  public async checkExistById(groupId: number) {
+    const result = await this.groupRepository.existById(groupId);
+    if (!result) {
+      throw new BadRequestException(NOT_EXIST_GROUP);
+    }
   }
 }
