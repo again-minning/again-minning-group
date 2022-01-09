@@ -14,13 +14,6 @@ export class GroupRepository extends Repository<Group> {
       .getMany();
   }
 
-  async findById(id: number): Promise<Group> {
-    return this.createQueryBuilder('group')
-      .whereInIds(id)
-      .leftJoinAndSelect('group.imageList', 'imageList')
-      .getOne();
-  }
-
   async existById(id: number): Promise<boolean> {
     const result: Array<object> = await this.createQueryBuilder()
       .select('group_id')
