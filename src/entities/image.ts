@@ -13,14 +13,16 @@ import { MyGroup } from './my.group';
 @Entity()
 export class Image {
   @PrimaryColumn({ type: 'bigint', primary: true })
+  imageId: number;
+
+  @PrimaryColumn({ type: 'bigint', primary: true })
   userId: number;
 
-  @ManyToOne(() => Group, (group) => group.imageList, { primary: true })
+  @ManyToOne(() => Group, (group) => group.imageList)
   @JoinColumn([{ name: 'group_id', referencedColumnName: 'groupId' }])
   group: Group;
 
   @ManyToOne(() => MyGroup, (myGroup) => myGroup.imageList, {
-    primary: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn([{ name: 'my_group_id', referencedColumnName: 'myGroupId' }])
