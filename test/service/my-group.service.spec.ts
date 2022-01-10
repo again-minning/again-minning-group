@@ -25,6 +25,7 @@ import {
   IS_DONE,
   MY_GROUP_NOT_FOUND,
 } from '../../src/common/response/content/message.my-group';
+import { ImageRepository } from '../../src/image/image.repository';
 
 describe('MyGroupService', () => {
   let myGroupService: MyGroupService;
@@ -40,14 +41,15 @@ describe('MyGroupService', () => {
     findOne: jest.fn().mockResolvedValue(myGroup2),
   };
   const mockGroupRepository = {
-    existById: jest
-      .fn()
-      .mockResolvedValueOnce(false)
-      .mockResolvedValueOnce(true),
+    existById: jest.fn().mockResolvedValueOnce(true),
   };
   const mockMyGroupWeekRepository = {
     save: jest.fn().mockResolvedValue([myGroupWeek1, myGroupWeek2]),
     create: jest.fn(),
+  };
+
+  const mockImageRepository = {
+    findAllByGroupId: jest.fn().mockResolvedValue([{}, {}]), // 더미 이미지 2개
   };
 
   const mockConnection = () => ({
@@ -85,6 +87,10 @@ describe('MyGroupService', () => {
           useValue: mockGroupRepository,
         },
         {
+          provide: getRepositoryToken(ImageRepository),
+          useValue: mockImageRepository,
+        },
+        {
           provide: getRepositoryToken(MyGroupWeek),
           useValue: mockMyGroupWeekRepository,
         },
@@ -94,10 +100,6 @@ describe('MyGroupService', () => {
 
     myGroupService = module.get<MyGroupService>(MyGroupService);
     connection = module.get<Connection>(Connection);
-  });
-
-  it('그룹이_존재하지_않는_경우', () => {
-    expect(myGroupService['isGroup'](2)).rejects.toThrow(BadRequestException);
   });
 
   it('진행중인_my_group_존재하는_경우', () => {

@@ -3,6 +3,7 @@ import { GroupController } from '../../src/group/controller/group.controller';
 import { GroupService } from '../../src/group/service/group.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { GroupRepository } from '../../src/group/repository/group.repository';
+import { ImageRepository } from '../../src/image/image.repository';
 
 describe('GroupController', () => {
   let controller: GroupController;
@@ -15,6 +16,10 @@ describe('GroupController', () => {
         GroupService,
         {
           provide: getRepositoryToken(GroupRepository),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(ImageRepository),
           useValue: mockRepository,
         },
       ],

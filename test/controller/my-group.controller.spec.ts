@@ -7,6 +7,7 @@ import { Connection } from 'typeorm';
 import { GroupService } from '../../src/group/service/group.service';
 import { MyGroupWeek } from '../../src/entities/my.group.week';
 import { GroupRepository } from '../../src/group/repository/group.repository';
+import { ImageRepository } from '../../src/image/image.repository';
 
 describe('MyGroupController', () => {
   let controller: MyGroupController;
@@ -29,6 +30,10 @@ describe('MyGroupController', () => {
         },
         {
           provide: getRepositoryToken(GroupRepository),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(ImageRepository),
           useValue: mockRepository,
         },
         {

@@ -7,19 +7,25 @@ import {
   groupAllList,
   groupListByHealth,
 } from '../template/group.template';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { ImageRepository } from '../../src/image/image.repository';
 
 describe('GroupService', () => {
   let service: GroupService;
   let repository: GroupRepository;
 
-  const mockRepository = {
+  const mockGroupRepository = {
     findAll: jest.fn().mockResolvedValue(groupAllList),
     findAllByCategory: jest.fn().mockResolvedValue(groupListByHealth),
-    findById: jest
+    findOne: jest
       .fn()
       .mockResolvedValueOnce(GROUP_DETAIL)
       .mockResolvedValueOnce(null),
+    existById: jest.fn().mockResolvedValueOnce(false),
+  };
+
+  const mockImageRepository = {
+    findAllByGroupId: jest.fn().mockResolvedValue([{}, {}]), // 더미 이미지 2개
   };
 
   beforeEach(async () => {
@@ -28,7 +34,11 @@ describe('GroupService', () => {
         GroupService,
         {
           provide: getRepositoryToken(GroupRepository),
-          useValue: mockRepository,
+          useValue: mockGroupRepository,
+        },
+        {
+          provide: getRepositoryToken(ImageRepository),
+          useValue: mockImageRepository,
         },
       ],
     }).compile();
@@ -55,16 +65,20 @@ describe('GroupService', () => {
 
   describe('그룹_상세_조회', () => {
     it('group_id가 1번인 그룹을 조회한다.', async () => {
-      jest.spyOn(repository, 'findById');
+      jest.spyOn(repository, 'findOne');
       const result = await service.getGroupDetail(1);
       expect(result.title).toEqual('하루 한 잔 물 마시기');
       expect(result.imageList.length).toEqual(2);
     });
   });
 
-  describe('없은_그룹_조회', () => {
+  it('그룹이_존재하지_않는_경우', () => {
+    expect(service['checkExistById'](2)).rejects.toThrow(BadRequestException);
+  });
+
+  describe('없는_그룹_조회', () => {
     it('없는 그룹을 조회하고 NotFoundException이 발생해야 한다.', () => {
-      jest.spyOn(repository, 'findById');
+      jest.spyOn(repository, 'findOne');
       expect(service.getGroupDetail(0)).rejects.toThrow(NotFoundException);
     });
   });

@@ -1,6 +1,6 @@
 import { Category } from '../../common/enum/category';
 import { Group } from '../../entities/group';
-import { Image } from '../../entities/image';
+import { ImageDto } from '../../image/image.dto';
 
 export class GroupResponseDto {
   constructor(group: Group) {
@@ -16,7 +16,7 @@ export class GroupResponseDto {
 }
 
 export class GroupDetail {
-  constructor(group: Group) {
+  constructor(group: Group, imageList: ImageDto[]) {
     this.groupId = group.groupId;
     this.category = group.category;
     this.title = group.title;
@@ -27,7 +27,7 @@ export class GroupDetail {
     this.description = group.description;
     this.recommendation = group.recommendation;
     this.todayCnt = group.todayCnt;
-    this.imageList = group.imageList;
+    this.imageList = imageList;
   }
   groupId: number;
   category: Category;
@@ -39,5 +39,5 @@ export class GroupDetail {
   description: string;
   recommendation: string;
   todayCnt: number;
-  imageList: Image[];
+  imageList: ImageDto[];
 }
