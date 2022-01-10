@@ -9,7 +9,7 @@ export class ImageRepository extends Repository<Image> {
   async findAllByGroupId(groupId: number, lastId = 0): Promise<ImageDto[]> {
     return this.createQueryBuilder('i')
       .select('i.imageId, i.url, i.createdAt')
-      .leftJoin('i.group', 'g')
+      .innerJoin('i.group', 'g')
       .limit(IMAGE_LIMIT)
       .where('g.groupId =:groupId', { groupId: groupId })
       .andWhere('g.groupId >:lastId', { lastId: lastId })
@@ -24,7 +24,7 @@ export class ImageRepository extends Repository<Image> {
   ): Promise<ImageDto[]> {
     return this.createQueryBuilder('i')
       .select('i.imageId, i.url, i.createdAt')
-      .leftJoin('i.myGroup', 'mg')
+      .innerJoin('i.myGroup', 'mg')
       .limit(IMAGE_LIMIT)
       .where('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
       .andWhere('i.imageId >:lastId', { lastId: lastId })
@@ -40,7 +40,7 @@ export class ImageRepository extends Repository<Image> {
   ): Promise<ImageDto[]> {
     return this.createQueryBuilder('i')
       .select('i.imageId, i.url, i.createdAt')
-      .leftJoin('i.myGroup', 'mg')
+      .innerJoin('i.myGroup', 'mg')
       .limit(IMAGE_LIMIT)
       .where('i.userId =:userId', { userId: userId })
       .andWhere('mg.myGroupId =:myGroupId', { myGroupId: myGroupId })
