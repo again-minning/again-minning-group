@@ -35,6 +35,17 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
 
+  @Delete('/image')
+  @UseInterceptors(TransactionInterceptor)
+  public async deleteMyImage(
+    @Body('imageIdList') imageIdList: number[],
+    @Body('userId') userId: number,
+    @EntityManager() manager,
+  ) {
+    await this.myGroupService.deleteMyImage(imageIdList, userId, manager);
+    return ResponseEntity.OK('이미지를 정삭적으로 삭제하였습니다.');
+  }
+
   @Get('/detail')
   public async getMyGroupDetail(
     @Query('myGroupId') myGroupId: number,

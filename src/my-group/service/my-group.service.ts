@@ -40,6 +40,16 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async deleteMyImage(
+    imageIdList: number[],
+    userId: number,
+    manager: EntityManager,
+  ) {
+    const imageList = await this.imageRepository.findAllByImageId(imageIdList);
+    this.checkImageIsMine(imageList, userId);
+    await this.imageRepository.deleteByImageIds(imageIdList, manager);
+  }
+
   public async getMyGroupDetail(
     myGroupId: number,
     userId: number,
@@ -231,5 +241,13 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
+  }
+
+  private checkImageIsMine(imageList: Image[], userId: number) {
+    imageList.forEach((image) => {
+      if (Number(image.userId) !== userId) {
+        throw new BadRequestException('나의 이미지만 삭제할 수 있습니다.');
+      }
+    });
   }
 }
