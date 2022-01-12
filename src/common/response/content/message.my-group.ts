@@ -17,3 +17,5 @@ export const MY_GROUP_DETAIL_OK =
   '나의 그룹 디페일 페이지를 정상적으로 조회하였습니다.';
 export const MY_IMAGE_LIST_OK = '정상적으로 나의 이미지를 조회하였습니다.';
 export const MY_GROUP_IS_DONE_INIT_OK = 'isDone 초기화 성공하였습니다.';
+export const MY_GROUP_FINISH_PROCESS_OK =
+  '종료 된 나의 그룹을 정상적으로 처리하였습니다.';

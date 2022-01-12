@@ -24,6 +24,7 @@ import {
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
   MY_GROUP_DETAIL_OK,
+  MY_GROUP_FINISH_PROCESS_OK,
   MY_GROUP_IS_DONE_INIT_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
@@ -36,6 +37,19 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Post('/scheduling/is-status')
+  @UseInterceptors(TransactionInterceptor)
+  public async updateStatusByFinishedMyGroupIds(
+    @Body('myGroupIds') myGroupIds: number[],
+    @EntityManager() manager,
+  ) {
+    await this.myGroupService.updateStatusByFinishedMyGroupIds(
+      myGroupIds,
+      manager,
+    );
+    return ResponseEntity.OK(MY_GROUP_FINISH_PROCESS_OK);
+  }
 
   @Post('/scheduling/is-done')
   public async updateIsDoneByMyGroupIds(

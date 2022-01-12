@@ -66,4 +66,8 @@ export class MyGroup {
   public updateIsDone(): void {
     this.isDone = false;
   }
+
+  public updateIsStatus(): void {
+    this.status = false;
+  }
 }
