@@ -80,4 +80,12 @@ export class Group {
       throw new BadRequestException(INVALID_TIME);
     }
   }
+
+  public calAvgRate(sum, cnt) {
+    this.avgRate = Math.round(sum / cnt);
+  }
+
+  public initToDayCnt() {
+    this.todayCnt = 0;
+  }
 }

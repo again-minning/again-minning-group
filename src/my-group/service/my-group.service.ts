@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -38,6 +40,7 @@ export class MyGroupService {
     private myGroupRepository: MyGroupRepository,
     private imageRepository: ImageRepository,
     private connection: Connection,
+    @Inject(forwardRef(() => GroupService))
     private groupService: GroupService,
     @InjectRepository(MyGroupWeek)
     private myGroupWeekRepository: Repository<MyGroupWeek>,
@@ -305,5 +308,9 @@ export class MyGroupService {
       groupMap.get(myGroup.group.groupId).endGroupTotalRate += myGroup.rate;
     });
     return groupMap;
+  }
+
+  public async getRateSunAndCntByStatusIsTrue() {
+    return await this.myGroupRepository.getRateSunAndCntByStatusIsTrue();
   }
 }

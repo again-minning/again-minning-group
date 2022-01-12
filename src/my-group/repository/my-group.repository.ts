@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, getRepository, Repository } from 'typeorm';
 import { MyGroup } from '../../entities/my.group';
 import { MyGroupDoneAndAllCnt } from '../dto/my.group.dto';
 
@@ -60,5 +60,16 @@ export class MyGroupRepository extends Repository<MyGroup> {
         myGroupId: myGroupId,
       })
       .getOne();
+  }
+
+  public async getRateSunAndCntByStatusIsTrue() {
+    return getRepository(MyGroup)
+      .createQueryBuilder('mg')
+      .select('mg.group.groupId', 'groupId')
+      .addSelect('SUM(mg.rate)', 'sum')
+      .addSelect('COUNT(mg.myGroupId)', 'cnt')
+      .where('mg.status = true')
+      .groupBy('mg.group.groupId')
+      .getRawMany();
   }
 }
