@@ -1,13 +1,28 @@
-import { Controller, Get, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common';
 import { GroupService } from '../service/group.service';
 import { GroupDetail, GroupResponseDto } from '../dto/group.dto';
 import { ResponseEntity } from '../../common/response/response.entity';
-import { GROUP_OK } from '../../common/response/content/message.group';
+import {
+  GROUP_IMAGE_OK,
+  GROUP_OK,
+} from '../../common/response/content/message.group';
 import { ResponseMessage } from '../../common/response/response.message';
 
 @Controller('/api/v1/group')
 export class GroupController {
   constructor(private groupService: GroupService) {}
+
+  @Get('/image')
+  public async getImageList(
+    @Query('lastId') lastId: number,
+    @Query('orderBy') orderBy: string,
+    @Query('groupId') groupId: number,
+  ) {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, GROUP_IMAGE_OK),
+      await this.groupService.getImageList(groupId, lastId, orderBy),
+    );
+  }
 
   @Get('/:category')
   // Todo -> @UseGuards
