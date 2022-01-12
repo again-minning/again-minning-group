@@ -56,6 +56,12 @@ export class Group {
   @Column({ type: 'varchar' })
   endTime: string;
 
+  @Column({ type: 'int' })
+  endGroupTotalRate: number;
+
+  @Column({ type: 'int' })
+  endGroupTotalCnt: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

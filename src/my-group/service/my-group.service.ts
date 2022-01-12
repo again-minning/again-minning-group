@@ -276,6 +276,7 @@ export class MyGroupService {
     myGroupList.forEach((myGroup) => myGroup.updateIsStatus());
     groupMemberCntMap.forEach((memberCnt, key) => {
       groupMap.get(key).memberCnt -= memberCnt;
+      groupMap.get(key).endGroupTotalCnt += memberCnt;
     });
     await manager.getRepository(MyGroup).save(myGroupList);
     await manager.getRepository(Group).save(groupList);
@@ -299,6 +300,9 @@ export class MyGroupService {
     const groupMap = new Map<number, Group>();
     myGroupList.forEach((myGroup) => {
       groupMap.set(myGroup.group.groupId, myGroup.group);
+    });
+    myGroupList.forEach((myGroup) => {
+      groupMap.get(myGroup.group.groupId).endGroupTotalRate += myGroup.rate;
     });
     return groupMap;
   }
