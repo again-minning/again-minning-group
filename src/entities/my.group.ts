@@ -62,4 +62,8 @@ export class MyGroup {
     this.successCnt += 1;
     this.group.todayCnt += 1;
   }
+
+  public updateIsDone(): void {
+    this.isDone = false;
+  }
 }

@@ -252,4 +252,10 @@ export class MyGroupService {
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
   }
+
+  async updateIsDoneByMyGroupIds(myGroupIds: number[]) {
+    const myGroupList = await this.myGroupRepository.findByIds(myGroupIds);
+    myGroupList.forEach((myGroup) => myGroup.updateIsDone());
+    await this.myGroupRepository.save(myGroupList);
+  }
 }

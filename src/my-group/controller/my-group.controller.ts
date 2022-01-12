@@ -24,6 +24,7 @@ import {
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
   MY_GROUP_DETAIL_OK,
+  MY_GROUP_IS_DONE_INIT_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
   MY_IMAGE_LIST_OK,
@@ -35,6 +36,14 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Post('/scheduling/is-done')
+  public async updateIsDoneByMyGroupIds(
+    @Body('myGroupIds') myGroupIds: number[],
+  ) {
+    await this.myGroupService.updateIsDoneByMyGroupIds(myGroupIds);
+    return ResponseEntity.OK(MY_GROUP_IS_DONE_INIT_OK);
+  }
 
   @Get('/image')
   public async getImageList(
