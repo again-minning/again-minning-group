@@ -31,10 +31,10 @@ export class MyGroup {
   group: Group;
 
   @Column({ type: 'int' })
-  successCnt;
+  successCnt: number;
 
   @Column({ type: 'int' })
-  totalDateCnt;
+  totalDateCnt: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -49,13 +49,13 @@ export class MyGroup {
   alarmTime: string;
 
   @Column({ type: 'int' })
-  rate;
+  rate: number;
 
   @Column({ type: 'boolean' })
-  status;
+  status: boolean;
 
   @Column({ type: 'boolean' })
-  isDone;
+  isDone: boolean;
 
   public doneDayMyGroup(): void {
     this.isDone = true;
