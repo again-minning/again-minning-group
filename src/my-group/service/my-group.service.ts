@@ -42,6 +42,21 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async getImageList(
+    userId,
+    myGroupId,
+    lastId,
+    order,
+  ): Promise<ImageDto[]> {
+    const orderBy = order == 'true' ? Order.DESC : Order.ASC;
+    return this.imageRepository.findAllByUserIdAndMyGroupId(
+      userId,
+      myGroupId,
+      lastId,
+      orderBy,
+    );
+  }
+
   public async getMyGroupDetail(
     myGroupId: number,
     userId: number,
@@ -236,15 +251,5 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
-  }
-
-  async getImageList(userId, myGroupId, lastId, order): Promise<ImageDto[]> {
-    const orderBy = order == 'true' ? Order.DESC : Order.ASC;
-    return this.imageRepository.findAllByUserIdAndMyGroupId(
-      userId,
-      myGroupId,
-      lastId,
-      orderBy,
-    );
   }
 }
