@@ -27,6 +27,7 @@ import {
   MY_GROUP_IMAGE_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
+  MY_IMAGE_LIST_OK,
 } from '../../common/response/content/message.my-group';
 import { ResponseMessage } from '../../common/response/response.message';
 import { TransactionInterceptor } from '../../common/interceptors/transaction.interceptor';
@@ -45,6 +46,24 @@ export class MyGroupController {
   ) {
     await this.myGroupService.deleteMyImage(imageIdList, userId, manager);
     return ResponseEntity.OK(MY_GROUP_IMAGE_DELETE_OK);
+  }
+
+  @Get('/image')
+  public async getImageList(
+    @Query('lastId') lastId: number,
+    @Query('orderBy') orderBy: boolean,
+    @Query('userId') userId: number,
+    @Query('myGroupId') myGroupId: number,
+  ) {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_IMAGE_LIST_OK),
+      await this.myGroupService.getImageList(
+        userId,
+        myGroupId,
+        lastId,
+        orderBy,
+      ),
+    );
   }
 
   @Get('/detail')

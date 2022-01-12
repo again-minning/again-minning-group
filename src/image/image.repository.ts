@@ -24,14 +24,18 @@ export class ImageRepository extends Repository<Image> {
       .execute();
   }
 
-  async findAllByGroupId(groupId: number, lastId = 0): Promise<ImageDto[]> {
+  async findAllByGroupId(
+    groupId: number,
+    lastId = 0,
+    order = Order.DESC,
+  ): Promise<ImageDto[]> {
     return this.createQueryBuilder('i')
       .select('i.imageId, i.url, i.createdAt')
       .innerJoin('i.group', 'g')
       .limit(IMAGE_LIMIT)
       .where('g.groupId =:groupId', { groupId: groupId })
       .andWhere('g.groupId >:lastId', { lastId: lastId })
-      .orderBy('i.createdAt', 'DESC')
+      .orderBy('i.createdAt', order)
       .getRawMany();
   }
 
@@ -50,7 +54,7 @@ export class ImageRepository extends Repository<Image> {
       .getRawMany();
   }
 
-  async findAllByUserIdAndGroupId(
+  async findAllByUserIdAndMyGroupId(
     userId: number,
     myGroupId: number,
     lastId = 0,
