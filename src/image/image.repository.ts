@@ -32,7 +32,7 @@ export class ImageRepository extends Repository<Image> {
       .getRawMany();
   }
 
-  async findAllByUserIdAndGroupId(
+  async findAllByUserIdAndMyGroupId(
     userId: number,
     myGroupId: number,
     lastId = 0,
