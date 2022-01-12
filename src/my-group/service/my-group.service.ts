@@ -23,6 +23,7 @@ import {
   INVALID_IMAGE,
   INVALID_MY_GROUP_ID,
   IS_DONE,
+  MY_GROUP_IMAGE_BAD_REQUEST,
   MY_GROUP_NOT_FOUND,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
@@ -246,7 +247,7 @@ export class MyGroupService {
   private checkImageIsMine(imageList: Image[], userId: number) {
     imageList.forEach((image) => {
       if (Number(image.userId) !== userId) {
-        throw new BadRequestException('나의 이미지만 삭제할 수 있습니다.');
+        throw new BadRequestException(MY_GROUP_IMAGE_BAD_REQUEST);
       }
     });
   }

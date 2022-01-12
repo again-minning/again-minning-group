@@ -24,6 +24,7 @@ import {
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
   MY_GROUP_DETAIL_OK,
+  MY_GROUP_IMAGE_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
 } from '../../common/response/content/message.my-group';
@@ -43,7 +44,7 @@ export class MyGroupController {
     @EntityManager() manager,
   ) {
     await this.myGroupService.deleteMyImage(imageIdList, userId, manager);
-    return ResponseEntity.OK('이미지를 정삭적으로 삭제하였습니다.');
+    return ResponseEntity.OK(MY_GROUP_IMAGE_DELETE_OK);
   }
 
   @Get('/detail')
