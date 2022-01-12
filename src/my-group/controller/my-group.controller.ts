@@ -26,6 +26,7 @@ import {
   MY_GROUP_DETAIL_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
+  MY_IMAGE_LIST_OK,
 } from '../../common/response/content/message.my-group';
 import { ResponseMessage } from '../../common/response/response.message';
 import { TransactionInterceptor } from '../../common/interceptors/transaction.interceptor';
@@ -34,6 +35,24 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Get('/image')
+  public async getImageList(
+    @Query('lastId') lastId: number,
+    @Query('orderBy') orderBy: boolean,
+    @Query('userId') userId: number,
+    @Query('myGroupId') myGroupId: number,
+  ) {
+    return ResponseEntity.OK_WITH(
+      new ResponseMessage(HttpStatus.OK, MY_IMAGE_LIST_OK),
+      await this.myGroupService.getImageList(
+        userId,
+        myGroupId,
+        lastId,
+        orderBy,
+      ),
+    );
+  }
 
   @Get('/detail')
   public async getMyGroupDetail(

@@ -28,6 +28,8 @@ import {
 } from '../../common/response/content/message.my-group';
 import { Image } from '../../entities/image';
 import { ImageRepository } from '../../image/image.repository';
+import { Order } from '../../common/enum/Order';
+import { ImageDto } from '../../image/image.dto';
 
 @Injectable()
 export class MyGroupService {
@@ -40,6 +42,21 @@ export class MyGroupService {
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
 
+  public async getImageList(
+    userId,
+    myGroupId,
+    lastId,
+    order,
+  ): Promise<ImageDto[]> {
+    const orderBy = order == 'true' ? Order.DESC : Order.ASC;
+    return this.imageRepository.findAllByUserIdAndMyGroupId(
+      userId,
+      myGroupId,
+      lastId,
+      orderBy,
+    );
+  }
+
   public async getMyGroupDetail(
     myGroupId: number,
     userId: number,
@@ -49,7 +66,10 @@ export class MyGroupService {
     this.checkIsMine(myGroup, userId);
     const imageList = myGroup.status
       ? await this.imageRepository.findAllByMyGroupId(myGroupId)
-      : await this.imageRepository.findAllByUserIdAndGroupId(userId, myGroupId);
+      : await this.imageRepository.findAllByUserIdAndMyGroupId(
+          userId,
+          myGroupId,
+        );
     return new MyGroupDetail(myGroup, imageList);
   }
 
