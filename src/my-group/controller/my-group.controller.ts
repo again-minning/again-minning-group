@@ -26,6 +26,7 @@ import {
   MY_GROUP_DETAIL_OK,
   MY_GROUP_FINISH_PROCESS_OK,
   MY_GROUP_IS_DONE_INIT_OK,
+  MY_GROUP_IMAGE_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
   MY_IMAGE_LIST_OK,
@@ -57,6 +58,16 @@ export class MyGroupController {
   ) {
     await this.myGroupService.updateIsDoneByMyGroupIds(myGroupIds);
     return ResponseEntity.OK(MY_GROUP_IS_DONE_INIT_OK);
+  }
+  @Delete('/image')
+  @UseInterceptors(TransactionInterceptor)
+  public async deleteMyImage(
+    @Body('imageIdList') imageIdList: number[],
+    @Body('userId') userId: number,
+    @EntityManager() manager,
+  ) {
+    await this.myGroupService.deleteMyImage(imageIdList, userId, manager);
+    return ResponseEntity.OK(MY_GROUP_IMAGE_DELETE_OK);
   }
 
   @Get('/image')

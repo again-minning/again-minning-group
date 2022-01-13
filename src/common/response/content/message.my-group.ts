@@ -15,6 +15,8 @@ export const MY_GROUP_STATUS_OK =
 export const MY_GROUP_DELETE_OK = '정상적으로 나의 그룹이 삭제되었습니다.';
 export const MY_GROUP_DETAIL_OK =
   '나의 그룹 디페일 페이지를 정상적으로 조회하였습니다.';
+export const MY_GROUP_IMAGE_BAD_REQUEST = '나의 이미지만 삭제할 수 있습니다.';
+export const MY_GROUP_IMAGE_DELETE_OK = '이미지를 정삭적으로 삭제하였습니다.';
 export const MY_IMAGE_LIST_OK = '정상적으로 나의 이미지를 조회하였습니다.';
 export const MY_GROUP_IS_DONE_INIT_OK = 'isDone 초기화 성공하였습니다.';
 export const MY_GROUP_FINISH_PROCESS_OK =
