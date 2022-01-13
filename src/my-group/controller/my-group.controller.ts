@@ -24,6 +24,7 @@ import {
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
   MY_GROUP_DETAIL_OK,
+  MY_GROUP_IMAGE_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
   MY_IMAGE_LIST_OK,
@@ -35,6 +36,17 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 @Controller('/api/v1/my-group')
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
+
+  @Delete('/image')
+  @UseInterceptors(TransactionInterceptor)
+  public async deleteMyImage(
+    @Body('imageIdList') imageIdList: number[],
+    @Body('userId') userId: number,
+    @EntityManager() manager,
+  ) {
+    await this.myGroupService.deleteMyImage(imageIdList, userId, manager);
+    return ResponseEntity.OK(MY_GROUP_IMAGE_DELETE_OK);
+  }
 
   @Get('/image')
   public async getImageList(

@@ -23,6 +23,7 @@ import {
   INVALID_IMAGE,
   INVALID_MY_GROUP_ID,
   IS_DONE,
+  MY_GROUP_IMAGE_BAD_REQUEST,
   MY_GROUP_NOT_FOUND,
   QUERY_BAD_REQUEST,
 } from '../../common/response/content/message.my-group';
@@ -41,6 +42,16 @@ export class MyGroupService {
     @InjectRepository(MyGroupWeek)
     private myGroupWeekRepository: Repository<MyGroupWeek>,
   ) {}
+
+  public async deleteMyImage(
+    imageIdList: number[],
+    userId: number,
+    manager: EntityManager,
+  ) {
+    const imageList = await this.imageRepository.findAllByImageId(imageIdList);
+    this.checkImageIsMine(imageList, userId);
+    await this.imageRepository.deleteByImageIds(imageIdList, manager);
+  }
 
   public async getImageList(
     userId,
@@ -251,5 +262,13 @@ export class MyGroupService {
     image.userId = myGroup.userId;
     image.url = file.originalname + new Date().getMilliseconds();
     return image;
+  }
+
+  private checkImageIsMine(imageList: Image[], userId: number) {
+    imageList.forEach((image) => {
+      if (Number(image.userId) !== userId) {
+        throw new BadRequestException(MY_GROUP_IMAGE_BAD_REQUEST);
+      }
+    });
   }
 }
