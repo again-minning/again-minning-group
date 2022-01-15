@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -31,6 +33,7 @@ import { Image } from '../../entities/image';
 import { ImageRepository } from '../../image/image.repository';
 import { Order } from '../../common/enum/Order';
 import { ImageDto } from '../../image/image.dto';
+import { Group } from '../../entities/group';
 
 @Injectable()
 export class MyGroupService {
@@ -38,6 +41,7 @@ export class MyGroupService {
     private myGroupRepository: MyGroupRepository,
     private imageRepository: ImageRepository,
     private connection: Connection,
+    @Inject(forwardRef(() => GroupService))
     private groupService: GroupService,
     @InjectRepository(MyGroupWeek)
     private myGroupWeekRepository: Repository<MyGroupWeek>,
@@ -264,6 +268,62 @@ export class MyGroupService {
     return image;
   }
 
+  async updateIsDoneByMyGroupIds(myGroupIds: number[]) {
+    const myGroupList = await this.myGroupRepository.findByIds(myGroupIds);
+    myGroupList.forEach((myGroup) => myGroup.updateIsDone());
+    await this.myGroupRepository.save(myGroupList);
+  }
+
+  async updateStatusByFinishedMyGroupIds(
+    myGroupIds: number[],
+    manager: EntityManager,
+  ) {
+    const myGroupList = await manager
+      .getRepository(MyGroup)
+      .findByIds(myGroupIds, {
+        relations: ['group'],
+      });
+    const groupList = [];
+    const groupMemberCntMap = this.initGroupMemberCntMap(myGroupList);
+    const groupMap = this.initGroupMap(myGroupList);
+    groupMap.forEach((group) => groupList.push(group));
+    myGroupList.forEach((myGroup) => myGroup.updateIsStatus());
+    groupMemberCntMap.forEach((memberCnt, key) => {
+      groupMap.get(key).memberCnt -= memberCnt;
+      groupMap.get(key).endGroupTotalCnt += memberCnt;
+    });
+    await manager.getRepository(MyGroup).save(myGroupList);
+    await manager.getRepository(Group).save(groupList);
+  }
+
+  private initGroupMemberCntMap(myGroupList: MyGroup[]) {
+    const groupMemberCntMap = new Map<number, number>();
+    myGroupList.forEach((myGroup) => {
+      groupMemberCntMap.set(myGroup.group.groupId, 0);
+    });
+    myGroupList.forEach((myGroup) => {
+      groupMemberCntMap.set(
+        myGroup.group.groupId,
+        groupMemberCntMap.get(myGroup.group.groupId) + 1,
+      );
+    });
+    return groupMemberCntMap;
+  }
+
+  private initGroupMap(myGroupList: MyGroup[]) {
+    const groupMap = new Map<number, Group>();
+    myGroupList.forEach((myGroup) => {
+      groupMap.set(myGroup.group.groupId, myGroup.group);
+    });
+    myGroupList.forEach((myGroup) => {
+      groupMap.get(myGroup.group.groupId).endGroupTotalRate += myGroup.rate;
+    });
+    return groupMap;
+  }
+
+  public async getRateSunAndCntByStatusIsTrue() {
+    return await this.myGroupRepository.getRateSunAndCntByStatusIsTrue();
+  }
   private checkImageIsMine(imageList: Image[], userId: number) {
     imageList.forEach((image) => {
       if (Number(image.userId) !== userId) {

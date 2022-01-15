@@ -56,6 +56,12 @@ export class Group {
   @Column({ type: 'varchar' })
   endTime: string;
 
+  @Column({ type: 'int' })
+  endGroupTotalRate: number;
+
+  @Column({ type: 'int' })
+  endGroupTotalCnt: number;
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -73,5 +79,13 @@ export class Group {
     if (!(startTime <= dateTime && dateTime <= endTime)) {
       throw new BadRequestException(INVALID_TIME);
     }
+  }
+
+  public calAvgRate(sum, cnt) {
+    this.avgRate = Math.round(sum / cnt);
+  }
+
+  public initToDayCnt() {
+    this.todayCnt = 0;
   }
 }

@@ -24,6 +24,8 @@ import {
   MY_GROUP_CREATE_OK,
   MY_GROUP_DELETE_OK,
   MY_GROUP_DETAIL_OK,
+  MY_GROUP_FINISH_PROCESS_OK,
+  MY_GROUP_IS_DONE_INIT_OK,
   MY_GROUP_IMAGE_DELETE_OK,
   MY_GROUP_OK,
   MY_GROUP_STATUS_OK,
@@ -37,6 +39,26 @@ import { EntityManager } from '../../common/decorators/entity.manager.decorator'
 export class MyGroupController {
   constructor(private readonly myGroupService: MyGroupService) {}
 
+  @Post('/scheduling/is-status')
+  @UseInterceptors(TransactionInterceptor)
+  public async updateStatusByFinishedMyGroupIds(
+    @Body('myGroupIds') myGroupIds: number[],
+    @EntityManager() manager,
+  ) {
+    await this.myGroupService.updateStatusByFinishedMyGroupIds(
+      myGroupIds,
+      manager,
+    );
+    return ResponseEntity.OK(MY_GROUP_FINISH_PROCESS_OK);
+  }
+
+  @Post('/scheduling/is-done')
+  public async updateIsDoneByMyGroupIds(
+    @Body('myGroupIds') myGroupIds: number[],
+  ) {
+    await this.myGroupService.updateIsDoneByMyGroupIds(myGroupIds);
+    return ResponseEntity.OK(MY_GROUP_IS_DONE_INIT_OK);
+  }
   @Delete('/image')
   @UseInterceptors(TransactionInterceptor)
   public async deleteMyImage(

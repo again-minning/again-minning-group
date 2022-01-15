@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MyGroupController } from './controller/my-group.controller';
 import { MyGroupService } from './service/my-group.service';
 import { GroupModule } from '../group/group.module';
@@ -10,9 +10,10 @@ import { ImageRepository } from '../image/image.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([MyGroupRepository, MyGroupWeek, ImageRepository]),
-    GroupModule,
+    forwardRef(() => GroupModule),
   ],
   controllers: [MyGroupController],
   providers: [MyGroupService],
+  exports: [MyGroupService],
 })
 export class MyGroupModule {}
